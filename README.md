@@ -1,46 +1,29 @@
-# 自用阅读书源
+# 阅读书源
 
-自己维护的阅读（Legado）书源，仅供个人使用，不公开分享。
-
-| 文件 | 站点 | 搜索 | 发现 | 最后测试 |
-|---|---|---|---|---|
-| `sources/biquge-tw.json` | https://www.biquge.tw | ✓ | 玄幻、武侠、都市、历史、科幻、游戏、女生、其他 | 2026-11-21 |
-| `sources/wfxs-tw.json` | https://m.wfxs.tw | ✓ | 10 个分类 | 2026-11-21 |
+阅读（Legado）书源，全部转成简体。
 
 ## 导入
 
-仓库是私有的，阅读 APP 的「网络导入」读不到私有仓库的地址，所以用本地导入：
+阅读 APP → 我的 → 书源管理 → ⋮ → 网络导入，粘贴地址：
 
-1. 把 `sources/` 下的 json 文件传到手机上
-2. 阅读 APP → 我的 → 书源管理 → 右上角 ⋮ → 本地导入 → 选这个文件
+| 站点 | 地址 |
+|---|---|
+| 笔趣阁 biquge.tw | `https://raw.githubusercontent.com/bonorca/legado-sources/main/sources/biquge-tw.json` |
+| 微风小说 wfxs.tw | `https://raw.githubusercontent.com/bonorca/legado-sources/main/sources/wfxs-tw.json` |
 
-重复导入会按书源地址覆盖旧的，不会出现两份。
+打不开时把 `raw.githubusercontent.com/bonorca/legado-sources/main` 换成 `cdn.jsdelivr.net/gh/bonorca/legado-sources@main`。
+
+两个站是同一个后台，书和章节一样，可以互相换源。
 
 ## 测试
-
-改完规则后，先在电脑上跑一遍，确认搜索、详情、目录、正文、发现都能取到：
 
 ```bash
 pip install -r tools/requirements.txt
 python tools/test_source.py sources/biquge-tw.json 剑来
 ```
 
-脚本只模拟了这里用到的规则写法（`@css:`、`##` 替换、`java.t2s`）。最后还是要在 APP 里实际搜一本书看一下。
+## 注意
 
-## 各站说明
-
-### biquge.tw
-
-- 搜索结果页是繁体，规则里用 `java.t2s` 转成简体；详情、目录、正文本来就是简体。
-- 搜索是模糊匹配，同一本书常有好几份（作者名带个点的是重复转载）。
-- 请求太快会被 429 限流，书源里设了每秒最多 2 次。缓存整本书时会慢一些。
-- 目录一页列出全部章节，正文没有分页。如果以后某章标题出现「（1 / 2）」这种分页，要补 `nextContentUrl`。
-- 「全部小说」分类翻页无效（每页都一样），所以发现里没放。
-
-### wfxs.tw（微风小说）
-
-- 和 biquge.tw 是同一个后台：书、章节编号、正文都一样，只是这边整站繁体。一个站挂了可以换另一个。
-- 所有文字（书名、简介、目录、正文）都用 `java.t2s` 转成简体。
-- 手机版目录每页只有 30 章，一本一千多章的书要翻 40 多页；所以目录改从电脑版 `www.wfxs.tw/booklist/编号.html` 取，一页就是全部章节，章节地址再换回手机版。
-- 网站自己的分类标签和内容对不上（比如「总裁豪门」里其实是玄幻书），这是站点的问题，发现页照原样保留。
-- 同样有 429 限流，限速每秒 2 次。
+- 两个站请求太快都会被限流，书源限速每秒 2 次。
+- biquge.tw 正文目前没有分页；以后章节标题出现「（1 / 2）」要补 `nextContentUrl`。
+- wfxs.tw 的目录从电脑版 www.wfxs.tw 取，手机版每页只有 30 章。
