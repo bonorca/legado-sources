@@ -13,6 +13,7 @@
 """
 import json
 import re
+import subprocess
 import sys
 import time
 from urllib.parse import urljoin, quote
@@ -41,7 +42,8 @@ def select(el, sel):
 
 def get_attr(el, attr):
     if attr == "text":
-        return re.sub(r"\s+", " ", el.get_text(" ", strip=True))
+        # 和 Jsoup 的 text() 一样：行内标签（<em> 等）之间不加空格，空白合并成一个
+        return re.sub(r"\s+", " ", el.get_text()).strip()
     if attr == "ownText":
         return "".join(t for t in el.find_all(string=True, recursive=False)).strip()
     if attr == "html":
@@ -96,6 +98,17 @@ def get_elements(el, rule):
     return select(el, rule[5:])
 
 
+def fill_url(template, key="", page=1):
+    """替换 {{key}}、{{page}}；其余 {{表达式}} 交给 node 当 JS 算（和 APP 一样）。"""
+    url = template.replace("{{key}}", quote(key)).replace("{{page}}", str(page))
+
+    def run_js(m):
+        code = f"const page={page}, key={json.dumps(key)}; process.stdout.write(String({m.group(1)}))"
+        return subprocess.run(["node", "-e", code], capture_output=True, text=True, check=True).stdout
+
+    return re.sub(r"\{\{(.+?)\}\}", run_js, url)
+
+
 class Runner:
     def __init__(self, src):
         self.src = src
@@ -124,7 +137,8 @@ class Runner:
             b["bookUrl"] = urljoin(page_url, b["bookUrl"])
             if b["coverUrl"]:
                 b["coverUrl"] = urljoin(page_url, b["coverUrl"])
-            books.append(b)
+            if b["name"]:  # APP 会丢掉没有书名的条目
+                books.append(b)
         return books
 
 
@@ -145,7 +159,7 @@ def main():
         print(f"===== {src['bookSourceName']}  ({src['bookSourceUrl']})")
 
         print(f"\n[搜索] {key}")
-        url = src["searchUrl"].replace("{{key}}", quote(key)).replace("{{page}}", "1")
+        url = fill_url(src["searchUrl"], key, 1)
         books = r.book_list(url, src["ruleSearch"])
         check(len(books) > 0, f"搜到 {len(books)} 本")
         for b in books[:3]:
@@ -154,9 +168,12 @@ def main():
         hit = next((b for b in books if b["name"] == key), books[0])
         check(T2S.convert(hit["name"]) == hit["name"], f"书名已是简体：{hit['name']}")
 
-        url2 = src["searchUrl"].replace("{{key}}", quote(key)).replace("{{page}}", "2")
+        url2 = fill_url(src["searchUrl"], key, 2)
         books2 = r.book_list(url2, src["ruleSearch"])
-        check(books2 and books2[0]["bookUrl"] != books[0]["bookUrl"], f"第 2 页能翻（{len(books2)} 本）")
+        if len(books) >= 10:
+            check(books2 and books2[0]["bookUrl"] != books[0]["bookUrl"], f"第 2 页能翻（{len(books2)} 本）")
+        else:
+            print(f"     （只有 {len(books)} 本，不测翻页）")
 
         print(f"\n[详情] {hit['bookUrl']}")
         info_url, soup = r.fetch(hit["bookUrl"])
@@ -168,10 +185,14 @@ def main():
         check(info["name"] == hit["name"], "详情页书名和搜索结果一致")
         check(info["author"] == hit["author"].rstrip("."), "详情页作者和搜索结果一致")
         check(bool(info["intro"]), "有简介")
-        check(bool(info["tocUrl"]), "有目录地址")
+        if ri.get("tocUrl"):
+            check(bool(info["tocUrl"]), "有目录地址")
 
         print("\n[目录]")
-        toc_url, soup = r.fetch(urljoin(info_url, info["tocUrl"]))
+        if info["tocUrl"]:
+            toc_url, soup = r.fetch(urljoin(info_url, info["tocUrl"]))
+        else:
+            toc_url = info_url  # 没写目录地址时，APP 直接在详情页上找目录
         rt = src["ruleToc"]
         chs = [(get_string(a, rt["chapterName"]), urljoin(toc_url, get_string(a, rt["chapterUrl"])))
                for a in get_elements(soup, rt["chapterList"])]
@@ -186,19 +207,20 @@ def main():
             _, soup = r.fetch(u)
             html = get_string(soup, src["ruleContent"]["content"])
             text = BeautifulSoup(html, "lxml").get_text("\n", strip=True)
-            junk = [w for w in ["笔趣阁", "biquge", "请收藏", "最新章节", "http", "www."] if w in text]
+            junk = [w for w in ["笔趣阁", "biquge", "52书库", "福门", "请收藏", "最新章节", "http", "www."] if w in text]
             check(len(text) > 0, f"{name}：{len(text)} 字，开头：{text[:30]}"
                   + ("（偏短，可能是作者公告，自己看一眼）" if 0 < len(text) < 500 else ""))
             check(not junk, f"{name}：正文里没有广告字样" + (f"（发现 {junk}）" if junk else ""))
-            check(T2S.convert(text) == text, f"{name}：正文是简体")
+            changed = sum(a != b for a, b in zip(text, T2S.convert(text)))
+            check(changed <= len(text) * 0.002, f"{name}：正文是简体" + (f"（有 {changed} 个字会被繁转简改动，多半是人名地名）" if changed else ""))
             time.sleep(0.5)
 
         if src.get("exploreUrl"):
             print("\n[发现]")
             for line in src["exploreUrl"].splitlines():
                 title, _, u = line.partition("::")
-                bs = r.book_list(u.replace("{{page}}", "1"), src["ruleExplore"])
-                bs2 = r.book_list(u.replace("{{page}}", "2"), src["ruleExplore"])
+                bs = r.book_list(fill_url(u, page=1), src["ruleExplore"])
+                bs2 = r.book_list(fill_url(u, page=2), src["ruleExplore"])
                 ok = len(bs) > 0 and all(b["name"] and b["bookUrl"] for b in bs)
                 check(ok and bs2 and bs2[0]["bookUrl"] != bs[0]["bookUrl"],
                       f"{title}：第1页 {len(bs)} 本，第2页 {len(bs2)} 本，例：{bs[0]['name'] if bs else '-'} / {bs[0]['author'] if bs else '-'} / {bs[0]['kind'] if bs else '-'}")

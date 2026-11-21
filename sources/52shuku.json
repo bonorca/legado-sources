@@ -1,0 +1,51 @@
+[
+  {
+    "bookSourceUrl": "https://www.52shuku.net",
+    "bookSourceName": "52书库 52shuku.net",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。网站把整本书切成很多页（第1页、第2页……），目录就是这些页，不是真正的章节。书名里的 [追妻] 这类标签会去掉，方便换源。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/so/search.php?q={{key}}&p={{page}}",
+    "exploreUrl": "言情::/yanqing/{{page==1?'':'index_'+page+'.html'}}\n现代耽美::/xiandaidushi/{{page==1?'':'index_'+page+'.html'}}\n穿越耽美::/chongsheng/{{page==1?'':'index_'+page+'.html'}}\n古架耽美::/jiakong/{{page==1?'':'index_'+page+'.html'}}\n百合::/gl/{{page==1?'':'index_'+page+'.html'}}\n综漫同人::/bl/{{page==1?'':'index_'+page+'.html'}}\n穿越重生::/chuanyue/{{page==1?'':'index_'+page+'.html'}}\n科幻::/KeHuan/{{page==1?'':'index_'+page+'.html'}}\n武侠玄幻::/wuxia/{{page==1?'':'index_'+page+'.html'}}\n军事历史::/jiakonglishi/{{page==1?'':'index_'+page+'.html'}}\n恐怖灵异::/kongbulingyi/{{page==1?'':'index_'+page+'.html'}}\n推理::/tuili/{{page==1?'':'index_'+page+'.html'}}\n文学::/wenxue/{{page==1?'':'index_'+page+'.html'}}",
+    "ruleSearch": {
+      "bookList": "@css:article.excerpt",
+      "name": "@css:header h4@text##^\\d+\\.\\s*|_[^_]*$|^\\[[^\\]]*\\]\\s*|\\s*\\[[^\\]]*\\]$",
+      "author": "@css:header h4@text##^.*_|【.*$",
+      "kind": "@css:.cat a@text",
+      "intro": "@css:.note@text##所属栏目：.*$",
+      "bookUrl": "@css:header a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:article.excerpt",
+      "name": "@css:header h2 a@text##^\\d+\\.\\s*|_[^_]*$|^\\[[^\\]]*\\]\\s*|\\s*\\[[^\\]]*\\]$",
+      "author": "@css:header h2 a@text##^.*_|【.*$",
+      "kind": "@css:header h2 a@text##^.*【|】.*$",
+      "intro": "@css:.note@text",
+      "bookUrl": "@css:header h2 a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:h1.article-title@text##_[^_]*$|^\\[[^\\]]*\\]\\s*|\\s*\\[[^\\]]*\\]$",
+      "author": "@css:h1.article-title@text##^.*_|【.*$",
+      "kind": "@css:h1.article-title@text##^.*【|】.*$",
+      "intro": "@css:.article-content p:eq(1)@text",
+      "lastChapter": "@css:ul.list li.mulu:last-child a@text",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:ul.list li.mulu a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:article.article-content@html##<div class=\"pagination2\">[\\s\\S]*?</div>|<p>[^<]*(?:52书库|52shuku|福门)[^<]*</p>|<hr[\\s\\S]*$"
+    },
+    "weight": 0,
+    "customOrder": 2,
+    "lastUpdateTime": 1795244863819
+  }
+]
