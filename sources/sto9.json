@@ -1,0 +1,59 @@
+[
+  {
+    "bookSourceUrl": "https://sto9.com",
+    "bookSourceName": "思兔 sto9.com",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体。书页只列 36 章，目录改从 /ajax_novels/chapterlist/书号.html 一次取全。正文里夹着被 emoji、花体字拆开的「sto9.com」广告行，以及「（還有更新耶）」，都已去掉；正文开头重复的章节标题也去掉了。只有一个结果时搜索会直接跳到书页，靠 bookUrlPattern 识别。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/search/{{key}}/{{page}}.html",
+    "exploreUrl": "玄幻奇幻::/novels/class/1_{{page}}.html\n武侠仙侠::/novels/class/2_{{page}}.html\n现代都市::/novels/class/3_{{page}}.html\n历史军事::/novels/class/4_{{page}}.html\n科幻小说::/novels/class/5_{{page}}.html\n游戏竞技::/novels/class/6_{{page}}.html\n恐怖灵异::/novels/class/7_{{page}}.html\n言情小说::/novels/class/8_{{page}}.html\n动漫同人::/novels/class/9_{{page}}.html\n其他类型::/novels/class/10_{{page}}.html",
+    "ruleSearch": {
+      "bookList": "@css:#article_list_content li",
+      "name": "@css:.newnav h3 a@text@js:java.t2s(result)",
+      "author": "@css:.labelbox label:eq(0)@text@js:java.t2s(result)",
+      "kind": "@css:.labelbox label:eq(1)@text@js:java.t2s(result)",
+      "intro": "@css:.ellipsis_2@text@js:java.t2s(result)",
+      "lastChapter": "@css:.zxzj a@text@js:java.t2s(result)",
+      "coverUrl": "@css:img@data-src",
+      "bookUrl": "@css:.newnav h3 a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
+      "author": "@css:[property=\"og:novel:author\"]@content@js:java.t2s(result)",
+      "kind": "@css:[property=\"og:novel:category\"]@content@js:java.t2s(result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
+      "intro": "@css:.navtxt@text##\\s*小說關鍵詞[\\s\\S]*$@js:java.t2s(result)",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "tocUrl": "@css:[property=\"og:book_id\"]@content@js:'/ajax_novels/chapterlist/'+result+'.html'",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:li a",
+      "chapterName": "text@js:java.t2s(result)",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:.txtnav@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$|^[^\n]{0,40}[.．][^\n]{0,4}[cｃ𝘤𝗰𝐜𝑐𝒄][^\n]{0,4}[oｏ𝘰𝗼𝐨𝑜𝒐][^\n]{0,4}[mｍ𝘮𝗺𝐦𝑚𝒎][^\n]{0,40}$|^[\\s 　]*（還有更新耶）[\\s 　]*$@js:java.t2s(result)",
+      "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
+    },
+    "weight": 0,
+    "customOrder": 5,
+    "lastUpdateTime": 1795249710013,
+    "ruleExplore": {
+      "bookList": "@css:#article_list_content li",
+      "name": "@css:.newnav h3 a@text@js:java.t2s(result)",
+      "author": "@css:.labelbox label:eq(0)@text@js:java.t2s(result)",
+      "kind": "@css:.labelbox label:eq(1)@text@js:java.t2s(result)",
+      "intro": "@css:.ellipsis_2@text@js:java.t2s(result)",
+      "lastChapter": "@css:.zxzj a@text@js:java.t2s(result)",
+      "coverUrl": "@css:img@data-src",
+      "bookUrl": "@css:.newnav h3 a@href"
+    },
+    "bookUrlPattern": "https?://sto9\\.com/book/\\d+\\.html"
+  }
+]

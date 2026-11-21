@@ -4,7 +4,7 @@
     "bookSourceName": "笔趣阁 biquge78.cc",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。正文是从繁体机器转过来的（什麽、藉此这类字），用 java.t2s 统一成简体，并把「丶」换回顿号。一章常分成两页，靠 nextContentUrl 自动接上。正文里插的「新⑥⑨书吧」「??书吧」「↑返回顶部↑」已去掉。搜索一次返回全部结果，没有翻页。",
+    "bookSourceComment": "自己维护。正文是从繁体机器转过来的（什麽、藉此这类字），用 java.t2s 统一成简体，并把「丶」换回顿号。一章常分成两页，靠 nextContentUrl 自动接上。正文里插的「新⑥⑨书吧」「??书吧」「↑返回顶部↑」已去掉。搜索一次返回全部结果，没有翻页。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -45,9 +45,9 @@
       "chapterUrl": "href"
     },
     "ruleContent": {
-      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:java.t2s(result)",
+      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:java.t2s(result).replace(/丶/g,\"、\")",
       "nextContentUrl": "@css:a#linkNext:contains(下一页)@href",
-      "replaceRegex": "##丶##、"
+      "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 3,

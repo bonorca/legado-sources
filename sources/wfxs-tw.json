@@ -4,7 +4,7 @@
     "bookSourceName": "微风小说 wfxs.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字都用 java.t2s 转成简体。手机版目录每页只有 30 章，所以目录改从电脑版 www.wfxs.tw 一次取全。和 biquge.tw 是同一个后台，章节内容一样，可以互为备用。请求太快会被限流，限速为每秒 2 次。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字都用 java.t2s 转成简体。手机版目录每页只有 30 章，所以目录改从电脑版 www.wfxs.tw 一次取全。和 biquge.tw 是同一个后台，章节内容一样，可以互为备用。请求太快会被限流，限速为每秒 2 次。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -46,7 +46,8 @@
       "chapterUrl": "href@js:'https://m.wfxs.tw'+result"
     },
     "ruleContent": {
-      "content": "@css:#read_conent_box@html@js:java.t2s(result)"
+      "content": "@css:#read_conent_box@html@js:java.t2s(result)",
+      "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 1,

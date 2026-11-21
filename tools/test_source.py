@@ -26,8 +26,10 @@ import traceback
 from pathlib import Path
 from urllib.parse import urljoin, quote
 
+import unicodedata
+
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 from opencc import OpenCC
 
 T2S = OpenCC("t2s")
@@ -59,6 +61,10 @@ def get_attr(el, attr):
         return re.sub(r"\s+", " ", el.get_text()).strip()
     if attr == "ownText":
         return "".join(t for t in el.find_all(string=True, recursive=False)).strip()
+    if attr == "textNodes":
+        # 和阅读一样：只取元素自己的文字节点（不含子标签里的字），每段去掉首尾空白后用换行连起来
+        parts = (t.strip() for t in el.find_all(string=True, recursive=False) if not isinstance(t, Comment))
+        return "\n".join(p for p in parts if p)
     if attr == "html":
         return str(el)
     v = el.get(attr)
@@ -81,11 +87,15 @@ def apply_post(value, regex, js):
         value = re.sub(pat, rep, value)
     if js:
         js = js.strip()
-        prefix = re.fullmatch(r"'([^']*)'\s*\+\s*result", js)
-        if js == "java.t2s(result)":
-            value = T2S.convert(value)
-        elif prefix:
-            value = prefix.group(1) + value
+        wrap = re.fullmatch(r"(?:'([^']*)'\s*\+\s*)?result(?:\s*\+\s*'([^']*)')?", js)
+        chain = re.fullmatch(r"(java\.t2s\(result\)|result)((?:\.replace\(/(?:[^/\\]|\\.)+/g,\s*\"[^\"]*\"\))*)", js)
+        if chain:
+            if chain.group(1) != "result":
+                value = T2S.convert(value)
+            for pat, rep in re.findall(r"\.replace\(/((?:[^/\\]|\\.)+)/g,\s*\"([^\"]*)\"\)", chain.group(2)):
+                value = re.sub(pat, rep, value)
+        elif wrap:
+            value = (wrap.group(1) or "") + value + (wrap.group(2) or "")
         else:
             raise NotImplementedError("测试脚本不支持这段 JS: " + js)
     return value.strip()
@@ -155,6 +165,7 @@ class Runner:
 
     def book_list(self, url, rules):
         page_url, soup = self.fetch(url)
+        self.last_url, self.last_soup = page_url, soup
         books = []
         for it in get_elements(soup, rules["bookList"]):
             b = {k: get_string(it, rules.get(k)) for k in
@@ -215,6 +226,14 @@ def test_source(src, key):
     try:
         print(f"\n[搜索] {key}")
         books = r.book_list(fill_url(src["searchUrl"], key, 1), src["ruleSearch"])
+        pat = src.get("bookUrlPattern")
+        if not books and pat and re.fullmatch(pat, r.last_url):
+            # 只有一个结果时站点直接跳到书页；APP 按 bookUrlPattern 认出来，用详情规则取书名
+            ri = src["ruleBookInfo"]
+            books = [{"name": get_string(r.last_soup, ri.get("name")), "author": get_string(r.last_soup, ri.get("author")),
+                      "kind": get_string(r.last_soup, ri.get("kind")), "lastChapter": get_string(r.last_soup, ri.get("lastChapter")),
+                      "bookUrl": r.last_url}]
+            print(f"     （搜索直接跳到了书页 {r.last_url}）")
         rep.check(stage, len(books) > 0, f"搜到 {len(books)} 本")
         for b in books[:3]:
             print(f"     {b['name']} / {b['author']} / {b['kind']} / 最新：{b['lastChapter']}")
@@ -261,6 +280,16 @@ def test_source(src, key):
             nxt = chs[i + 1][1] if i + 1 < len(chs) else None
             text, pages = r.content(u, nxt)
             junk = [w for w in JUNK if w in text]
+            # 站点自己的域名：先把花体字母归一、去掉 emoji 和符号，再找（例：𝘀𝘁𝗼𝟵.𝗰𝗼𝗺、sto🎉9.com）
+            flat = re.sub(r"[^a-z0-9\n]", "", unicodedata.normalize("NFKC", text).lower())
+            label = re.sub(r"^(www|m|wap)\.", "", src["bookSourceUrl"].split("//")[-1].split("/")[0]).split(".")[0]
+            hits = [ln for ln in flat.split("\n") if label + "com" in ln or label + "net" in ln or label + "cc" in ln]
+            if hits:
+                junk.append(f"{label} 域名广告 {len(hits)} 处")
+            # 繁转简漏掉的「著」（看著、跟著）
+            zhe = re.findall(r"(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])", text)
+            if zhe:
+                junk.append(f"「著」没改成「着」{len(zhe)} 处")
             rep.check(stage, len(text) > 0, f"{name}：{len(text)} 字" + (f"（{pages} 页拼起来）" if pages > 1 else "")
                       + f"，开头：{text[:30]}" + ("（偏短，可能是作者公告，自己看一眼）" if 0 < len(text) < 500 else ""))
             rep.check(stage, not junk, f"{name}：正文里没有广告字样" + (f"（发现 {junk}）" if junk else ""))
