@@ -101,11 +101,43 @@ def apply_post(value, regex, js):
     return value.strip()
 
 
+def select_default(el, rule):
+    """阅读的默认写法（JSoup Default）里最常用的一种：class.名.序号 / id.名 / tag.名 / text.文字，用 @ 串起来。"""
+    hits = [el]
+    for seg in rule.split("@"):
+        kind, _, rest = seg.partition(".")
+        name, _, idx = rest.partition(".")
+        nxt = []
+        for h in hits:
+            if kind == "class":
+                nxt += h.select("." + name)
+            elif kind == "id":
+                nxt += h.select("#" + name)
+            elif kind == "tag":
+                nxt += h.find_all(name)
+            elif kind == "text":  # 自己的文字里含有这段字的元素
+                nxt += [e for e in h.find_all(True)
+                        if name in "".join(t for t in e.find_all(string=True, recursive=False))]
+            else:
+                raise NotImplementedError("测试脚本不支持这种默认写法: " + seg)
+        if idx:
+            i = int(idx)
+            nxt = [nxt[i]] if -len(nxt) <= i < len(nxt) else []
+        hits = nxt
+    return hits
+
+
+DEFAULT_RULE = re.compile(r"^(class|id|tag|text)\.")
+
+
 def get_string(el, rule):
     if not rule:
         return ""
     rule, regex, js = split_rule(rule)
-    if rule.startswith("@css:"):
+    if DEFAULT_RULE.match(rule) and "@" in rule:
+        sel, _, attr = rule.rpartition("@")
+        value = "\n".join(v for v in (get_attr(h, attr) for h in select_default(el, sel)) if v)
+    elif rule.startswith("@css:"):
         sel, _, attr = rule[5:].rpartition("@")
         hits = select(el, sel) if sel else [el]
         value = "\n".join(v for v in (get_attr(h, attr) for h in hits) if v)
@@ -121,7 +153,10 @@ def get_elements(el, rule):
 
 def fill_url(template, key="", page=1):
     """替换 {{key}}、{{page}}；其余 {{表达式}} 交给 node 当 JS 算（和 APP 一样）。"""
-    url = template.replace("{{key}}", quote(key)).replace("{{page}}", str(page))
+    m = re.search(r'"charset"\s*:\s*"([^"]+)"', template)
+    cs = (m.group(1) if m else "utf-8").lower()
+    enc_key = quote(key.encode("gb18030" if cs in ("gbk", "gb2312") else cs))
+    url = template.replace("{{key}}", enc_key).replace("{{page}}", str(page))
 
     def run_js(m):
         code = f"const page={page}, key={json.dumps(key)}; process.stdout.write(String({m.group(1)}))"
@@ -153,14 +188,25 @@ class Runner:
         method = (opt.get("method") or "GET").upper()
         body = opt.get("body")
         headers = {"Content-Type": "application/x-www-form-urlencoded"} if body else {}
-        for wait in [0, 5, 15, 30]:
+        for n, wait in enumerate([0, 5, 15, 30]):
             time.sleep(wait or 0.6)
-            r = self.s.request(method, url, data=body, headers=headers, timeout=25)
+            try:
+                r = self.s.request(method, url, data=body, headers=headers, timeout=25)
+            except (requests.ConnectionError, requests.Timeout) as e:
+                if n == 3:
+                    raise
+                print(f"     （连接失败 {type(e).__name__}，稍后重试）")
+                continue
             if r.status_code != 429:
                 break
             print(f"     （429 限流，{wait or 5} 秒后重试）")
         r.raise_for_status()
-        r.encoding = opt.get("charset") or "utf-8"
+        cs = opt.get("charset")
+        if not cs:  # 和 APP 一样：没写 charset 就看响应头和网页里的 <meta charset>
+            m = re.search(r"charset=([\w-]+)", r.headers.get("content-type", "")) or \
+                re.search(rb'charset=["\']?([\w-]+)', r.content[:3000])
+            cs = (m.group(1) if isinstance(m.group(1), str) else m.group(1).decode()) if m else "utf-8"
+        r.encoding = "gb18030" if cs.lower() in ("gbk", "gb2312") else cs
         return r.url, BeautifulSoup(r.text, "lxml")
 
     def book_list(self, url, rules):
@@ -253,7 +299,10 @@ def test_source(src, key):
         for k, v in info.items():
             print(f"     {k}: {v[:60]}")
         rep.check(stage, info["name"] == hit["name"], "详情页书名和搜索结果一致")
-        rep.check(stage, info["author"] == hit["author"].rstrip("."), "详情页作者和搜索结果一致")
+        if hit["author"]:
+            rep.check(stage, info["author"] == hit["author"].rstrip("."), "详情页作者和搜索结果一致")
+        else:
+            rep.check(stage, bool(info["author"]), f"详情页有作者（搜索结果里没有作者）：{info['author']}")
         rep.check(stage, bool(info["intro"]), "有简介")
         if ri.get("tocUrl"):
             rep.check(stage, bool(info["tocUrl"]), "有目录地址")
@@ -303,8 +352,17 @@ def test_source(src, key):
             for line in src["exploreUrl"].splitlines():
                 title, _, u = line.partition("::")
                 bs = r.book_list(fill_url(u, page=1), src["ruleExplore"])
-                bs2 = r.book_list(fill_url(u, page=2), src["ruleExplore"])
                 ok = len(bs) > 0 and all(b["name"] and b["bookUrl"] for b in bs)
+                try:
+                    bs2 = r.book_list(fill_url(u, page=2), src["ruleExplore"])
+                except requests.HTTPError as e:
+                    if e.response is not None and e.response.status_code == 404 and ok:
+                        rep.check(stage, True, f"{title}：第1页 {len(bs)} 本，只有 1 页（第2页 404，APP 会停在这里）")
+                        continue
+                    raise
+                if ok and bs2 and [b["bookUrl"] for b in bs2] == [b["bookUrl"] for b in bs]:
+                    rep.check(stage, True, f"{title}：第1页 {len(bs)} 本，只有 1 页（站点把第2页显示成第1页）")
+                    continue
                 rep.check(stage, ok and bs2 and bs2[0]["bookUrl"] != bs[0]["bookUrl"],
                           f"{title}：第1页 {len(bs)} 本，第2页 {len(bs2)} 本，例：{bs[0]['name'] if bs else '-'} / {bs[0]['author'] if bs else '-'} / {bs[0]['kind'] if bs else '-'}")
         else:

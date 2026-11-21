@@ -317,5 +317,252 @@
       "bookUrl": "@css:.newnav h3 a@href"
     },
     "bookUrlPattern": "https?://sto9\\.com/book/\\d+\\.html"
+  },
+  {
+    "bookSourceUrl": "https://www.ggd66.com",
+    "bookSourceName": "格格党 ggd66.com",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。和笔趣阁 biquge78.cc 是同一套网站程序，规则照搬。新近章节夹着繁体（像是从繁体站转来的），所以正文统一用 java.t2s 转简体，「丶」换回顿号，漏转的「著」改成「着」。一章常分成两页，靠 nextContentUrl 自动接上。正文里的「↑返回顶部↑」和「新⑥⑨书吧」类广告已去掉。搜索一次返回全部结果，没有翻页。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/search/,{\"method\":\"POST\",\"body\":\"searchkey={{key}}&submit=\"}",
+    "exploreUrl": "玄幻魔法::/sort/1/{{page}}/\n武侠修真::/sort/2/{{page}}/\n都市言情::/sort/3/{{page}}/\n历史军事::/sort/4/{{page}}/\n科幻灵异::/sort/5/{{page}}/\n游戏竞技::/sort/6/{{page}}/\n女生耽美::/sort/7/{{page}}/",
+    "ruleSearch": {
+      "bookList": "@css:.bookbox",
+      "name": "@css:.bookname a@text",
+      "author": "@css:.author@text##^作者：|\n[\\s\\S]*$",
+      "lastChapter": "@css:.cat a@text",
+      "intro": "@css:.update@text##^简介：\\s*",
+      "bookUrl": "@css:.bookname a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:.bookbox",
+      "name": "@css:.bookname a@text",
+      "author": "@css:.author@text##^作者：|\n[\\s\\S]*$",
+      "wordCount": "@css:.author@text##^[^\n]*\n字数：|\n[\\s\\S]*$",
+      "lastChapter": "@css:.cat a@text",
+      "intro": "@css:.update@text##^简介：\\s*",
+      "bookUrl": "@css:.bookname a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content",
+      "author": "@css:[property=\"og:novel:author\"]@content",
+      "kind": "@css:[property=\"og:novel:status\"]@content",
+      "wordCount": "@css:.booktag span.blue@text##\\s*\\d+人读过",
+      "lastChapter": "@css:[property=\"og:novel:lastest_chapter_name\"]@content",
+      "intro": "@css:.bookintro@text##《[^》]*》是[\\s\\S]*$",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:#list-chapterAll dd a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:java.t2s(result).replace(/丶/g,\"、\")",
+      "nextContentUrl": "@css:a#linkNext:contains(下一页)@href",
+      "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
+    },
+    "weight": 0,
+    "customOrder": 6,
+    "lastUpdateTime": 1795251575255
+  },
+  {
+    "bookSourceUrl": "https://jpxs123.top",
+    "bookSourceName": "精品小说 jpxs123.top",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。网站是 GBK 编码，搜索要按 GBK 提交。书是整本 TXT 切成的「第N节」，长书会拆成「剑来(上)」「剑来(下)」两本。搜索结果里没有作者，进详情页才有。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/e/search/indexsearch.php,{\"method\":\"POST\",\"charset\":\"gbk\",\"body\":\"keyboard={{key}}&show=title&classid=0\"}",
+    "exploreUrl": "精品小说::/book/{{page==1?'':'index_'+page+'.html'}}\n都市小说::/dsxs/{{page==1?'':'index_'+page+'.html'}}\n玄幻修真::/xuanhuan/{{page==1?'':'index_'+page+'.html'}}\n历史军事::/lishi/{{page==1?'':'index_'+page+'.html'}}\n科幻竞技::/khjj/{{page==1?'':'index_'+page+'.html'}}\n穿越架空::/cyjk/{{page==1?'':'index_'+page+'.html'}}\n鬼话悬疑::/guihua/{{page==1?'':'index_'+page+'.html'}}\n同人小说::/tongren/{{page==1?'':'index_'+page+'.html'}}",
+    "ruleSearch": {
+      "bookList": "@css:div.bk",
+      "name": "@css:h3@text",
+      "intro": "@css:.bk_right p@text##^简介：\\s*",
+      "coverUrl": "@css:.pic img@src",
+      "bookUrl": "@css:h3 a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:div.bk",
+      "name": "@css:h3@text##\\s*[(（][^()（）]*[)）]$",
+      "author": "@css:.booknews@ownText##^作者[:：]\\s*|\\s+$",
+      "intro": "@css:.infos p@text",
+      "coverUrl": "@css:.pic img@src",
+      "bookUrl": "@css:a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:.infos h1@text",
+      "author": "@css:.infos .date a@text",
+      "intro": "@css:.infos p@text",
+      "coverUrl": "@css:.book_info .pic img@src",
+      "lastChapter": "@css:.book_list li:last-child a@text",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:.book_list li a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:.read_chapterDetail@html"
+    },
+    "weight": 0,
+    "customOrder": 7,
+    "lastUpdateTime": 1795251701323
+  },
+  {
+    "bookSourceUrl": "https://tianyashuku.net",
+    "bookSourceName": "天涯书库 tianyashuku.net",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。偏出版书和经典书（金庸、古龙、名著等），也有部分网络小说。搜索结果里只有书名和封面，作者在详情页。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/e/search/index.php,{\"method\":\"POST\",\"body\":\"tbname=bookname&show=title,writer&tempid=1&keyboard={{key}}\"}",
+    "exploreUrl": "武侠::/wuxia/{{page==1?'':'index_'+page+'.html'}}\n言情::/yanqing/{{page==1?'':'index_'+page+'.html'}}\n推理::/tuili/{{page==1?'':'index_'+page+'.html'}}\n恐怖::/kongbu/{{page==1?'':'index_'+page+'.html'}}\n网络::/wangluo/{{page==1?'':'index_'+page+'.html'}}\n科幻::/kehuan/{{page==1?'':'index_'+page+'.html'}}\n校园::/xiaoyuan/{{page==1?'':'index_'+page+'.html'}}\n中国文学::/cn/{{page==1?'':'index_'+page+'.html'}}\n外国文学::/world/{{page==1?'':'index_'+page+'.html'}}",
+    "ruleSearch": {
+      "bookList": "@css:article.themebetter-ent-loop-item",
+      "name": "@css:h2 a@text",
+      "author": "@css:footer .price@text",
+      "coverUrl": "@css:img.thumb@src",
+      "bookUrl": "@css:h2 a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content",
+      "author": "@css:[property=\"og:novel:author\"]@content",
+      "kind": "@css:[property=\"og:novel:category\"]@content",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content",
+      "intro": "@css:.product-excerpt@ownText",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:#list dd a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:.m-article-text@html"
+    },
+    "weight": 0,
+    "customOrder": 8,
+    "lastUpdateTime": 1795251810714,
+    "ruleExplore": {
+      "bookList": "@css:article.themebetter-ent-loop-item",
+      "name": "@css:h2 a@text",
+      "author": "@css:footer .price@text",
+      "coverUrl": "@css:img.thumb@src",
+      "bookUrl": "@css:h2 a@href"
+    }
+  },
+  {
+    "bookSourceUrl": "https://www.sangshixs.com",
+    "bookSourceName": "九九藏书网 sangshixs.com",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。多是完本老书。搜索结果是表格：书名、最新章节、作者。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/e/search/index.php,{\"method\":\"POST\",\"body\":\"tbname=bookname&show=title,writer&tempid=1&keyboard={{key}}\"}",
+    "exploreUrl": "玄幻仙侠::/xuanhuan/{{page==1?'':'index_'+page+'.html'}}\n都市言情::/yanqing/{{page==1?'':'index_'+page+'.html'}}\n穿越架空::/chuanyue/{{page==1?'':'index_'+page+'.html'}}\n历史军事::/lishi/{{page==1?'':'index_'+page+'.html'}}\n科幻灵异::/lingyi/{{page==1?'':'index_'+page+'.html'}}\n网游竞技::/wangyou/{{page==1?'':'index_'+page+'.html'}}\n耽美同人::/danmei/{{page==1?'':'index_'+page+'.html'}}\n文学经典::/wenxue/{{page==1?'':'index_'+page+'.html'}}",
+    "ruleSearch": {
+      "bookList": "@css:table tbody tr",
+      "name": "@css:td:nth-child(1) a@text",
+      "lastChapter": "@css:td:nth-child(2) a@text",
+      "author": "@css:td:nth-child(3)@text",
+      "bookUrl": "@css:td:nth-child(1) a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:table tbody tr",
+      "name": "@css:td:nth-child(1) a@text",
+      "author": "@css:td:nth-child(2)@text",
+      "bookUrl": "@css:td:nth-child(1) a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content",
+      "author": "@css:[property=\"og:novel:author\"]@content",
+      "kind": "@css:[property=\"og:novel:category\"]@content",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content",
+      "intro": "@css:[property=\"og:description\"]@content",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:ul#booklist li a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:#content@html"
+    },
+    "weight": 0,
+    "customOrder": 9,
+    "lastUpdateTime": 1795251910252
+  },
+  {
+    "bookSourceUrl": "https://www.mianfeixiaoshuoyueduwang.com",
+    "bookSourceName": "免费小说阅读网 mianfeixiaoshuoyueduwang.com",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。一章一页，正文完整。搜索结果后面会混进外站（qb5.io）的书，只取链接是本站 /book/ 的那些。目录带「作品相关」（作者感言）和分卷。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/index.php?c=book&a=search&keywords={{key}}",
+    "exploreUrl": "奇幻玄幻::/category/1{{page==1?'':'_'+page}}.html\n武侠仙侠::/category/2{{page==1?'':'_'+page}}.html\n历史军事::/category/3{{page==1?'':'_'+page}}.html\n都市娱乐::/category/4{{page==1?'':'_'+page}}.html\n竞技同人::/category/5{{page==1?'':'_'+page}}.html\n科幻游戏::/category/6{{page==1?'':'_'+page}}.html\n悬疑灵异::/category/7{{page==1?'':'_'+page}}.html\n古代言情::/category/9{{page==1?'':'_'+page}}.html\n都市言情::/category/10{{page==1?'':'_'+page}}.html\n幻想时空::/category/11{{page==1?'':'_'+page}}.html",
+    "ruleSearch": {
+      "bookList": "@css:dl.hot dd",
+      "name": "@css:h4 a[href^=\"/book/\"]@text",
+      "author": "@css:p span@text",
+      "intro": "@css:p:last-child@text",
+      "coverUrl": "@css:img@src",
+      "bookUrl": "@css:h4 a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:.pic_txt_list",
+      "name": "@css:h3 a@text",
+      "author": "@css:[itemprop=\"author\"]@text",
+      "kind": "@css:p.info@ownText##^作者[:：]|[()（）\\s]",
+      "intro": "@css:p.description@text",
+      "coverUrl": "@css:img@src",
+      "bookUrl": "@css:h3 a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:.pic_txt_list [itemprop=\"name\"]@text",
+      "author": "@css:.pic_txt_list [itemprop=\"author\"]@text",
+      "kind": "@css:.pic_txt_list p.info:nth-of-type(2) span@text",
+      "intro": "@css:[itemprop=\"description\"]@text",
+      "coverUrl": "@css:.pic_txt_list img@src",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:ul.list li a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:#content@html"
+    },
+    "weight": 0,
+    "customOrder": 10,
+    "lastUpdateTime": 1795252248995
   }
 ]

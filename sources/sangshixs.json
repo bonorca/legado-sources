@@ -1,0 +1,49 @@
+[
+  {
+    "bookSourceUrl": "https://www.sangshixs.com",
+    "bookSourceName": "九九藏书网 sangshixs.com",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。多是完本老书。搜索结果是表格：书名、最新章节、作者。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/e/search/index.php,{\"method\":\"POST\",\"body\":\"tbname=bookname&show=title,writer&tempid=1&keyboard={{key}}\"}",
+    "exploreUrl": "玄幻仙侠::/xuanhuan/{{page==1?'':'index_'+page+'.html'}}\n都市言情::/yanqing/{{page==1?'':'index_'+page+'.html'}}\n穿越架空::/chuanyue/{{page==1?'':'index_'+page+'.html'}}\n历史军事::/lishi/{{page==1?'':'index_'+page+'.html'}}\n科幻灵异::/lingyi/{{page==1?'':'index_'+page+'.html'}}\n网游竞技::/wangyou/{{page==1?'':'index_'+page+'.html'}}\n耽美同人::/danmei/{{page==1?'':'index_'+page+'.html'}}\n文学经典::/wenxue/{{page==1?'':'index_'+page+'.html'}}",
+    "ruleSearch": {
+      "bookList": "@css:table tbody tr",
+      "name": "@css:td:nth-child(1) a@text",
+      "lastChapter": "@css:td:nth-child(2) a@text",
+      "author": "@css:td:nth-child(3)@text",
+      "bookUrl": "@css:td:nth-child(1) a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:table tbody tr",
+      "name": "@css:td:nth-child(1) a@text",
+      "author": "@css:td:nth-child(2)@text",
+      "bookUrl": "@css:td:nth-child(1) a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content",
+      "author": "@css:[property=\"og:novel:author\"]@content",
+      "kind": "@css:[property=\"og:novel:category\"]@content",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content",
+      "intro": "@css:[property=\"og:description\"]@content",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:ul#booklist li a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:#content@html"
+    },
+    "weight": 0,
+    "customOrder": 9,
+    "lastUpdateTime": 1795251910252
+  }
+]

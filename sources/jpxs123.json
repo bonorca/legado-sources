@@ -1,0 +1,50 @@
+[
+  {
+    "bookSourceUrl": "https://jpxs123.top",
+    "bookSourceName": "精品小说 jpxs123.top",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。网站是 GBK 编码，搜索要按 GBK 提交。书是整本 TXT 切成的「第N节」，长书会拆成「剑来(上)」「剑来(下)」两本。搜索结果里没有作者，进详情页才有。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/e/search/indexsearch.php,{\"method\":\"POST\",\"charset\":\"gbk\",\"body\":\"keyboard={{key}}&show=title&classid=0\"}",
+    "exploreUrl": "精品小说::/book/{{page==1?'':'index_'+page+'.html'}}\n都市小说::/dsxs/{{page==1?'':'index_'+page+'.html'}}\n玄幻修真::/xuanhuan/{{page==1?'':'index_'+page+'.html'}}\n历史军事::/lishi/{{page==1?'':'index_'+page+'.html'}}\n科幻竞技::/khjj/{{page==1?'':'index_'+page+'.html'}}\n穿越架空::/cyjk/{{page==1?'':'index_'+page+'.html'}}\n鬼话悬疑::/guihua/{{page==1?'':'index_'+page+'.html'}}\n同人小说::/tongren/{{page==1?'':'index_'+page+'.html'}}",
+    "ruleSearch": {
+      "bookList": "@css:div.bk",
+      "name": "@css:h3@text",
+      "intro": "@css:.bk_right p@text##^简介：\\s*",
+      "coverUrl": "@css:.pic img@src",
+      "bookUrl": "@css:h3 a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:div.bk",
+      "name": "@css:h3@text##\\s*[(（][^()（）]*[)）]$",
+      "author": "@css:.booknews@ownText##^作者[:：]\\s*|\\s+$",
+      "intro": "@css:.infos p@text",
+      "coverUrl": "@css:.pic img@src",
+      "bookUrl": "@css:a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:.infos h1@text",
+      "author": "@css:.infos .date a@text",
+      "intro": "@css:.infos p@text",
+      "coverUrl": "@css:.book_info .pic img@src",
+      "lastChapter": "@css:.book_list li:last-child a@text",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:.book_list li a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:.read_chapterDetail@html"
+    },
+    "weight": 0,
+    "customOrder": 7,
+    "lastUpdateTime": 1795251701323
+  }
+]

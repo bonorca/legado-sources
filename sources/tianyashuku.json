@@ -1,0 +1,50 @@
+[
+  {
+    "bookSourceUrl": "https://tianyashuku.net",
+    "bookSourceName": "天涯书库 tianyashuku.net",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。偏出版书和经典书（金庸、古龙、名著等），也有部分网络小说。搜索结果里只有书名和封面，作者在详情页。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/e/search/index.php,{\"method\":\"POST\",\"body\":\"tbname=bookname&show=title,writer&tempid=1&keyboard={{key}}\"}",
+    "exploreUrl": "武侠::/wuxia/{{page==1?'':'index_'+page+'.html'}}\n言情::/yanqing/{{page==1?'':'index_'+page+'.html'}}\n推理::/tuili/{{page==1?'':'index_'+page+'.html'}}\n恐怖::/kongbu/{{page==1?'':'index_'+page+'.html'}}\n网络::/wangluo/{{page==1?'':'index_'+page+'.html'}}\n科幻::/kehuan/{{page==1?'':'index_'+page+'.html'}}\n校园::/xiaoyuan/{{page==1?'':'index_'+page+'.html'}}\n中国文学::/cn/{{page==1?'':'index_'+page+'.html'}}\n外国文学::/world/{{page==1?'':'index_'+page+'.html'}}",
+    "ruleSearch": {
+      "bookList": "@css:article.themebetter-ent-loop-item",
+      "name": "@css:h2 a@text",
+      "author": "@css:footer .price@text",
+      "coverUrl": "@css:img.thumb@src",
+      "bookUrl": "@css:h2 a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content",
+      "author": "@css:[property=\"og:novel:author\"]@content",
+      "kind": "@css:[property=\"og:novel:category\"]@content",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content",
+      "intro": "@css:.product-excerpt@ownText",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:#list dd a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:.m-article-text@html"
+    },
+    "weight": 0,
+    "customOrder": 8,
+    "lastUpdateTime": 1795251810714,
+    "ruleExplore": {
+      "bookList": "@css:article.themebetter-ent-loop-item",
+      "name": "@css:h2 a@text",
+      "author": "@css:footer .price@text",
+      "coverUrl": "@css:img.thumb@src",
+      "bookUrl": "@css:h2 a@href"
+    }
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "bookSourceUrl": "https://www.mianfeixiaoshuoyueduwang.com",
+    "bookSourceName": "免费小说阅读网 mianfeixiaoshuoyueduwang.com",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。一章一页，正文完整。搜索结果后面会混进外站（qb5.io）的书，只取链接是本站 /book/ 的那些。目录带「作品相关」（作者感言）和分卷。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/index.php?c=book&a=search&keywords={{key}}",
+    "exploreUrl": "奇幻玄幻::/category/1{{page==1?'':'_'+page}}.html\n武侠仙侠::/category/2{{page==1?'':'_'+page}}.html\n历史军事::/category/3{{page==1?'':'_'+page}}.html\n都市娱乐::/category/4{{page==1?'':'_'+page}}.html\n竞技同人::/category/5{{page==1?'':'_'+page}}.html\n科幻游戏::/category/6{{page==1?'':'_'+page}}.html\n悬疑灵异::/category/7{{page==1?'':'_'+page}}.html\n古代言情::/category/9{{page==1?'':'_'+page}}.html\n都市言情::/category/10{{page==1?'':'_'+page}}.html\n幻想时空::/category/11{{page==1?'':'_'+page}}.html",
+    "ruleSearch": {
+      "bookList": "@css:dl.hot dd",
+      "name": "@css:h4 a[href^=\"/book/\"]@text",
+      "author": "@css:p span@text",
+      "intro": "@css:p:last-child@text",
+      "coverUrl": "@css:img@src",
+      "bookUrl": "@css:h4 a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:.pic_txt_list",
+      "name": "@css:h3 a@text",
+      "author": "@css:[itemprop=\"author\"]@text",
+      "kind": "@css:p.info@ownText##^作者[:：]|[()（）\\s]",
+      "intro": "@css:p.description@text",
+      "coverUrl": "@css:img@src",
+      "bookUrl": "@css:h3 a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:.pic_txt_list [itemprop=\"name\"]@text",
+      "author": "@css:.pic_txt_list [itemprop=\"author\"]@text",
+      "kind": "@css:.pic_txt_list p.info:nth-of-type(2) span@text",
+      "intro": "@css:[itemprop=\"description\"]@text",
+      "coverUrl": "@css:.pic_txt_list img@src",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:ul.list li a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:#content@html"
+    },
+    "weight": 0,
+    "customOrder": 10,
+    "lastUpdateTime": 1795252248995
+  }
+]

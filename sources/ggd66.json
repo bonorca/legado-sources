@@ -1,0 +1,56 @@
+[
+  {
+    "bookSourceUrl": "https://www.ggd66.com",
+    "bookSourceName": "格格党 ggd66.com",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。和笔趣阁 biquge78.cc 是同一套网站程序，规则照搬。新近章节夹着繁体（像是从繁体站转来的），所以正文统一用 java.t2s 转简体，「丶」换回顿号，漏转的「著」改成「着」。一章常分成两页，靠 nextContentUrl 自动接上。正文里的「↑返回顶部↑」和「新⑥⑨书吧」类广告已去掉。搜索一次返回全部结果，没有翻页。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/search/,{\"method\":\"POST\",\"body\":\"searchkey={{key}}&submit=\"}",
+    "exploreUrl": "玄幻魔法::/sort/1/{{page}}/\n武侠修真::/sort/2/{{page}}/\n都市言情::/sort/3/{{page}}/\n历史军事::/sort/4/{{page}}/\n科幻灵异::/sort/5/{{page}}/\n游戏竞技::/sort/6/{{page}}/\n女生耽美::/sort/7/{{page}}/",
+    "ruleSearch": {
+      "bookList": "@css:.bookbox",
+      "name": "@css:.bookname a@text",
+      "author": "@css:.author@text##^作者：|\n[\\s\\S]*$",
+      "lastChapter": "@css:.cat a@text",
+      "intro": "@css:.update@text##^简介：\\s*",
+      "bookUrl": "@css:.bookname a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:.bookbox",
+      "name": "@css:.bookname a@text",
+      "author": "@css:.author@text##^作者：|\n[\\s\\S]*$",
+      "wordCount": "@css:.author@text##^[^\n]*\n字数：|\n[\\s\\S]*$",
+      "lastChapter": "@css:.cat a@text",
+      "intro": "@css:.update@text##^简介：\\s*",
+      "bookUrl": "@css:.bookname a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content",
+      "author": "@css:[property=\"og:novel:author\"]@content",
+      "kind": "@css:[property=\"og:novel:status\"]@content",
+      "wordCount": "@css:.booktag span.blue@text##\\s*\\d+人读过",
+      "lastChapter": "@css:[property=\"og:novel:lastest_chapter_name\"]@content",
+      "intro": "@css:.bookintro@text##《[^》]*》是[\\s\\S]*$",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:#list-chapterAll dd a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:java.t2s(result).replace(/丶/g,\"、\")",
+      "nextContentUrl": "@css:a#linkNext:contains(下一页)@href",
+      "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
+    },
+    "weight": 0,
+    "customOrder": 6,
+    "lastUpdateTime": 1795251575255
+  }
+]
