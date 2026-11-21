@@ -6,16 +6,24 @@
   ##正则##替换       对结果做替换
   @js:java.t2s(result)  繁体转简体（用 opencc 模拟）
   @js:'前缀'+result     在结果前面拼一段（比如换域名）
-选择器里的 :eq(n) 按 Jsoup 的意思处理（从 0 开始）。
+  地址,{"method":"POST","body":"..."}   POST 请求
+  {{表达式}}           地址里的 JS，交给 node 计算
+  nextContentUrl / replaceRegex   正文分页和正文替换
+选择器里的 :eq(n) 按 Jsoup 的意思处理（从 0 开始），:contains() 也能用。
 
 用法：
-  python tools/test_source.py sources/biquge-tw.json 剑来
+  python tools/test_source.py all.json                 每个书源用 tools/keywords.json 里的书名测
+  python tools/test_source.py sources/xx.json 剑来      指定书名
+  python tools/test_source.py all.json --summary 报告.md  另外写一份 Markdown 汇总
 """
+import argparse
 import json
 import re
 import subprocess
 import sys
 import time
+import traceback
+from pathlib import Path
 from urllib.parse import urljoin, quote
 
 import requests
@@ -24,10 +32,15 @@ from opencc import OpenCC
 
 T2S = OpenCC("t2s")
 sys.stdout.reconfigure(encoding="utf-8")
+ROOT = Path(__file__).resolve().parent.parent
+STAGES = ["搜索", "详情", "目录", "正文", "发现"]
 
+
+# ---------- 规则解析 ----------
 
 def select(el, sel):
-    """支持 Jsoup 的 :eq(n)，其余交给 soupsieve。"""
+    """支持 Jsoup 的 :eq(n) 和 :contains()，其余交给 soupsieve。"""
+    sel = sel.replace(":contains(", ":-soup-contains(")
     m = re.search(r":eq\((\d+)\)", sel)
     if not m:
         return el.select(sel)
@@ -83,11 +96,9 @@ def get_string(el, rule):
         return ""
     rule, regex, js = split_rule(rule)
     if rule.startswith("@css:"):
-        body = rule[5:]
-        sel, _, attr = body.rpartition("@")
+        sel, _, attr = rule[5:].rpartition("@")
         hits = select(el, sel) if sel else [el]
-        vals = [get_attr(h, attr) for h in hits]
-        value = "\n".join(v for v in vals if v)
+        value = "\n".join(v for v in (get_attr(h, attr) for h in hits) if v)
     else:
         value = get_attr(el, rule)
     return apply_post(value, regex, js)
@@ -109,6 +120,16 @@ def fill_url(template, key="", page=1):
     return re.sub(r"\{\{(.+?)\}\}", run_js, url)
 
 
+def split_url(url):
+    """阅读的地址可以写成 地址,{选项}；拆成地址和选项。"""
+    m = re.match(r"^(.*?),\s*(\{[\s\S]*\})\s*$", url)
+    if not m:
+        return url, {}
+    return m.group(1), json.loads(m.group(2))
+
+
+# ---------- 请求 ----------
+
 class Runner:
     def __init__(self, src):
         self.src = src
@@ -117,16 +138,20 @@ class Runner:
         self.s.headers.update(json.loads(src.get("header") or "{}"))
 
     def fetch(self, url):
-        url = urljoin(self.base + "/", url)
+        url, opt = split_url(url)
+        url = urljoin(self.base + "/", url.strip())
+        method = (opt.get("method") or "GET").upper()
+        body = opt.get("body")
+        headers = {"Content-Type": "application/x-www-form-urlencoded"} if body else {}
         for wait in [0, 5, 15, 30]:
             time.sleep(wait or 0.6)
-            r = self.s.get(url, timeout=20)
+            r = self.s.request(method, url, data=body, headers=headers, timeout=25)
             if r.status_code != 429:
                 break
             print(f"     （429 限流，{wait or 5} 秒后重试）")
         r.raise_for_status()
-        r.encoding = "utf-8"
-        return url, BeautifulSoup(r.text, "lxml")
+        r.encoding = opt.get("charset") or "utf-8"
+        return r.url, BeautifulSoup(r.text, "lxml")
 
     def book_list(self, url, rules):
         page_url, soup = self.fetch(url)
@@ -141,40 +166,66 @@ class Runner:
                 books.append(b)
         return books
 
+    def content(self, url, next_chapter_url):
+        """取一章正文；有 nextContentUrl 时一页页接上，遇到下一章地址就停（和 APP 一样）。"""
+        rc = self.src["ruleContent"]
+        parts, seen = [], {url}
+        while True:
+            page_url, soup = self.fetch(url)
+            parts.append(get_string(soup, rc["content"]))
+            nxt = get_string(soup, rc.get("nextContentUrl"))
+            nxt = urljoin(page_url, nxt) if nxt else ""
+            if not nxt or nxt in seen or nxt == next_chapter_url or len(parts) >= 20:
+                break
+            seen.add(nxt)
+            url = nxt
+        text = "\n".join(BeautifulSoup(p, "lxml").get_text("\n", strip=True) for p in parts)
+        if rc.get("replaceRegex"):
+            _, regex, _ = split_rule(rc["replaceRegex"])
+            text = apply_post(text, regex, None)
+        return text, len(parts)
 
-problems = []
+
+# ---------- 检查 ----------
+
+class Report:
+    def __init__(self, name):
+        self.name = name
+        self.failed = {s: [] for s in STAGES}
+        self.skipped = set()
+
+    def check(self, stage, cond, msg):
+        print(("  ✓ " if cond else "  ✗ ") + msg)
+        if not cond:
+            self.failed[stage].append(msg)
+
+    @property
+    def ok(self):
+        return not any(self.failed.values())
 
 
-def check(cond, msg):
-    print(("  ✓ " if cond else "  ✗ ") + msg)
-    if not cond:
-        problems.append(msg)
+JUNK = ["笔趣阁", "biquge", "52书库", "福门", "书吧", "返回顶部", "请收藏", "最新章节", "http", "www."]
 
 
-def main():
-    path, key = sys.argv[1], sys.argv[2]
-    sources = json.load(open(path, encoding="utf-8"))
-    for src in sources:
-        r = Runner(src)
-        print(f"===== {src['bookSourceName']}  ({src['bookSourceUrl']})")
-
+def test_source(src, key):
+    rep = Report(src["bookSourceName"])
+    r = Runner(src)
+    stage = "搜索"
+    print(f"\n===== {src['bookSourceName']}  ({src['bookSourceUrl']})  关键词：{key}")
+    try:
         print(f"\n[搜索] {key}")
-        url = fill_url(src["searchUrl"], key, 1)
-        books = r.book_list(url, src["ruleSearch"])
-        check(len(books) > 0, f"搜到 {len(books)} 本")
+        books = r.book_list(fill_url(src["searchUrl"], key, 1), src["ruleSearch"])
+        rep.check(stage, len(books) > 0, f"搜到 {len(books)} 本")
         for b in books[:3]:
             print(f"     {b['name']} / {b['author']} / {b['kind']} / 最新：{b['lastChapter']}")
-        check(all(b["name"] and b["bookUrl"] for b in books), "每本都有书名和链接")
+        rep.check(stage, all(b["name"] and b["bookUrl"] for b in books), "每本都有书名和链接")
         hit = next((b for b in books if b["name"] == key), books[0])
-        check(T2S.convert(hit["name"]) == hit["name"], f"书名已是简体：{hit['name']}")
+        rep.check(stage, T2S.convert(hit["name"]) == hit["name"], f"书名已是简体：{hit['name']}")
+        if "{{page}}" in src["searchUrl"] and len(books) >= 10:
+            books2 = r.book_list(fill_url(src["searchUrl"], key, 2), src["ruleSearch"])
+            rep.check(stage, books2 and books2[0]["bookUrl"] != books[0]["bookUrl"], f"第 2 页能翻（{len(books2)} 本）")
 
-        url2 = fill_url(src["searchUrl"], key, 2)
-        books2 = r.book_list(url2, src["ruleSearch"])
-        if len(books) >= 10:
-            check(books2 and books2[0]["bookUrl"] != books[0]["bookUrl"], f"第 2 页能翻（{len(books2)} 本）")
-        else:
-            print(f"     （只有 {len(books)} 本，不测翻页）")
-
+        stage = "详情"
         print(f"\n[详情] {hit['bookUrl']}")
         info_url, soup = r.fetch(hit["bookUrl"])
         ri = src["ruleBookInfo"]
@@ -182,12 +233,13 @@ def main():
                 ["name", "author", "kind", "wordCount", "lastChapter", "intro", "coverUrl", "tocUrl"]}
         for k, v in info.items():
             print(f"     {k}: {v[:60]}")
-        check(info["name"] == hit["name"], "详情页书名和搜索结果一致")
-        check(info["author"] == hit["author"].rstrip("."), "详情页作者和搜索结果一致")
-        check(bool(info["intro"]), "有简介")
+        rep.check(stage, info["name"] == hit["name"], "详情页书名和搜索结果一致")
+        rep.check(stage, info["author"] == hit["author"].rstrip("."), "详情页作者和搜索结果一致")
+        rep.check(stage, bool(info["intro"]), "有简介")
         if ri.get("tocUrl"):
-            check(bool(info["tocUrl"]), "有目录地址")
+            rep.check(stage, bool(info["tocUrl"]), "有目录地址")
 
+        stage = "目录"
         print("\n[目录]")
         if info["tocUrl"]:
             toc_url, soup = r.fetch(urljoin(info_url, info["tocUrl"]))
@@ -196,25 +248,27 @@ def main():
         rt = src["ruleToc"]
         chs = [(get_string(a, rt["chapterName"]), urljoin(toc_url, get_string(a, rt["chapterUrl"])))
                for a in get_elements(soup, rt["chapterList"])]
-        check(len(chs) > 0, f"共 {len(chs)} 章")
+        rep.check(stage, len(chs) > 0, f"共 {len(chs)} 章")
         print(f"     第一章：{chs[0][0]}  {chs[0][1]}")
         print(f"     最后一章：{chs[-1][0]}  {chs[-1][1]}")
-        check(len({u for _, u in chs}) == len(chs), "章节地址没有重复")
-        check(all(n for n, _ in chs), "每章都有标题")
+        rep.check(stage, len({u for _, u in chs}) == len(chs), "章节地址没有重复")
+        rep.check(stage, all(n for n, _ in chs), "每章都有标题")
 
+        stage = "正文"
         print("\n[正文]")
-        for name, u in [chs[0], chs[len(chs) // 2], chs[-1]]:
-            _, soup = r.fetch(u)
-            html = get_string(soup, src["ruleContent"]["content"])
-            text = BeautifulSoup(html, "lxml").get_text("\n", strip=True)
-            junk = [w for w in ["笔趣阁", "biquge", "52书库", "福门", "请收藏", "最新章节", "http", "www."] if w in text]
-            check(len(text) > 0, f"{name}：{len(text)} 字，开头：{text[:30]}"
-                  + ("（偏短，可能是作者公告，自己看一眼）" if 0 < len(text) < 500 else ""))
-            check(not junk, f"{name}：正文里没有广告字样" + (f"（发现 {junk}）" if junk else ""))
+        for i in sorted({0, len(chs) // 2, len(chs) - 1}):
+            name, u = chs[i]
+            nxt = chs[i + 1][1] if i + 1 < len(chs) else None
+            text, pages = r.content(u, nxt)
+            junk = [w for w in JUNK if w in text]
+            rep.check(stage, len(text) > 0, f"{name}：{len(text)} 字" + (f"（{pages} 页拼起来）" if pages > 1 else "")
+                      + f"，开头：{text[:30]}" + ("（偏短，可能是作者公告，自己看一眼）" if 0 < len(text) < 500 else ""))
+            rep.check(stage, not junk, f"{name}：正文里没有广告字样" + (f"（发现 {junk}）" if junk else ""))
             changed = sum(a != b for a, b in zip(text, T2S.convert(text)))
-            check(changed <= len(text) * 0.002, f"{name}：正文是简体" + (f"（有 {changed} 个字会被繁转简改动，多半是人名地名）" if changed else ""))
-            time.sleep(0.5)
+            rep.check(stage, changed <= len(text) * 0.002,
+                      f"{name}：正文是简体" + (f"（有 {changed} 个字会被繁转简改动，多半是人名地名）" if changed else ""))
 
+        stage = "发现"
         if src.get("exploreUrl"):
             print("\n[发现]")
             for line in src["exploreUrl"].splitlines():
@@ -222,14 +276,58 @@ def main():
                 bs = r.book_list(fill_url(u, page=1), src["ruleExplore"])
                 bs2 = r.book_list(fill_url(u, page=2), src["ruleExplore"])
                 ok = len(bs) > 0 and all(b["name"] and b["bookUrl"] for b in bs)
-                check(ok and bs2 and bs2[0]["bookUrl"] != bs[0]["bookUrl"],
-                      f"{title}：第1页 {len(bs)} 本，第2页 {len(bs2)} 本，例：{bs[0]['name'] if bs else '-'} / {bs[0]['author'] if bs else '-'} / {bs[0]['kind'] if bs else '-'}")
-                time.sleep(0.3)
+                rep.check(stage, ok and bs2 and bs2[0]["bookUrl"] != bs[0]["bookUrl"],
+                          f"{title}：第1页 {len(bs)} 本，第2页 {len(bs2)} 本，例：{bs[0]['name'] if bs else '-'} / {bs[0]['author'] if bs else '-'} / {bs[0]['kind'] if bs else '-'}")
+        else:
+            rep.skipped.add(stage)
+    except Exception as e:
+        msg = f"出错：{type(e).__name__}: {e}"[:200]
+        print("  ✗ " + msg)
+        traceback.print_exc(limit=1)
+        rep.failed[stage].append(msg)
+        for s in STAGES[STAGES.index(stage) + 1:]:
+            rep.skipped.add(s)
+    return rep
 
-    print("\n" + ("全部通过" if not problems else f"有 {len(problems)} 项没通过："))
-    for p in problems:
-        print("  - " + p)
-    sys.exit(1 if problems else 0)
+
+def write_summary(path, reports):
+    lines = ["| 书源 | " + " | ".join(STAGES) + " |", "|---" * (len(STAGES) + 1) + "|"]
+    for rp in reports:
+        cells = ["—" if s in rp.skipped and not rp.failed[s] else ("❌" if rp.failed[s] else "✅") for s in STAGES]
+        lines.append(f"| {rp.name} | " + " | ".join(cells) + " |")
+    bad = [rp for rp in reports if not rp.ok]
+    if bad:
+        lines.append("\n**没通过的项目**\n")
+        for rp in bad:
+            for s in STAGES:
+                for m in rp.failed[s]:
+                    lines.append(f"- {rp.name} / {s}：{m}")
+    Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("file")
+    ap.add_argument("keyword", nargs="?")
+    ap.add_argument("--summary")
+    a = ap.parse_args()
+    sources = json.load(open(a.file, encoding="utf-8"))
+    keywords = json.loads((ROOT / "tools" / "keywords.json").read_text(encoding="utf-8"))
+    reports = []
+    for src in sources:
+        key = a.keyword or keywords.get(src["bookSourceUrl"])
+        if not key:
+            sys.exit(f"tools/keywords.json 里没有 {src['bookSourceUrl']} 的测试书名")
+        reports.append(test_source(src, key))
+    print("\n========== 汇总")
+    for rp in reports:
+        bad = [m for s in STAGES for m in rp.failed[s]]
+        print(("✅ " if rp.ok else "❌ ") + rp.name + ("" if rp.ok else f"（{len(bad)} 项没通过）"))
+        for m in bad:
+            print("   - " + m)
+    if a.summary:
+        write_summary(a.summary, reports)
+    sys.exit(0 if all(rp.ok for rp in reports) else 1)
 
 
 if __name__ == "__main__":

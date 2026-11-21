@@ -1,0 +1,56 @@
+[
+  {
+    "bookSourceUrl": "https://www.biquge78.cc",
+    "bookSourceName": "笔趣阁 biquge78.cc",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。正文是从繁体机器转过来的（什麽、藉此这类字），用 java.t2s 统一成简体，并把「丶」换回顿号。一章常分成两页，靠 nextContentUrl 自动接上。正文里插的「新⑥⑨书吧」「??书吧」「↑返回顶部↑」已去掉。搜索一次返回全部结果，没有翻页。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/search/,{\"method\":\"POST\",\"body\":\"searchkey={{key}}&submit=\"}",
+    "exploreUrl": "玄幻魔法::/sort/1/{{page}}/\n武侠修真::/sort/2/{{page}}/\n都市言情::/sort/3/{{page}}/\n历史军事::/sort/4/{{page}}/\n科幻灵异::/sort/5/{{page}}/\n游戏竞技::/sort/6/{{page}}/\n女生耽美::/sort/7/{{page}}/",
+    "ruleSearch": {
+      "bookList": "@css:.bookbox",
+      "name": "@css:.bookname a@text",
+      "author": "@css:.author@text##^作者：|\n[\\s\\S]*$",
+      "lastChapter": "@css:.cat a@text",
+      "intro": "@css:.update@text##^简介：\\s*",
+      "bookUrl": "@css:.bookname a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:.bookbox",
+      "name": "@css:.bookname a@text",
+      "author": "@css:.author@text##^作者：|\n[\\s\\S]*$",
+      "wordCount": "@css:.author@text##^[^\n]*\n字数：|\n[\\s\\S]*$",
+      "lastChapter": "@css:.cat a@text",
+      "intro": "@css:.update@text##^简介：\\s*",
+      "bookUrl": "@css:.bookname a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content",
+      "author": "@css:[property=\"og:novel:author\"]@content",
+      "kind": "@css:[property=\"og:novel:status\"]@content",
+      "wordCount": "@css:.booktag span.blue@text##\\s*\\d+人读过",
+      "lastChapter": "@css:[property=\"og:novel:lastest_chapter_name\"]@content",
+      "intro": "@css:.bookintro@text##《[^》]*》是[\\s\\S]*$",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:#list-chapterAll dd a",
+      "chapterName": "text",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:java.t2s(result)",
+      "nextContentUrl": "@css:a#linkNext:contains(下一页)@href",
+      "replaceRegex": "##丶##、"
+    },
+    "weight": 0,
+    "customOrder": 3,
+    "lastUpdateTime": 1795248433509
+  }
+]
