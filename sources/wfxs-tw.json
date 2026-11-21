@@ -1,0 +1,55 @@
+[
+  {
+    "bookSourceUrl": "https://m.wfxs.tw",
+    "bookSourceName": "微风小说 wfxs.tw",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。整站繁体，所有文字都用 java.t2s 转成简体。手机版目录每页只有 30 章，所以目录改从电脑版 www.wfxs.tw 一次取全。和 biquge.tw 是同一个后台，章节内容一样，可以互为备用。请求太快会被限流，限速为每秒 2 次。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/s/?search={{key}}&sort=default&page={{page}}",
+    "exploreUrl": "仙侠玄幻::/xianxiaxuanhuan/{{page}}/\n穿越架空::/chuanyuejiakong/{{page}}/\n都市异能::/dushiyineng/{{page}}/\n都市言情::/dushiyanqing/{{page}}/\n总裁豪门::/haomenzongcai/{{page}}/\n悬疑灵异::/xuanyilingyi/{{page}}/\n浪漫青春::/langmanqingchun/{{page}}/\n现代言情::/xianyan/{{page}}/\n古代言情::/guyan/{{page}}/\n其他类型::/qita/{{page}}/",
+    "ruleSearch": {
+      "bookList": "@css:.result-card",
+      "name": "@css:.book-title@text@js:java.t2s(result)",
+      "author": "@css:.author@text@js:java.t2s(result)",
+      "kind": "@css:.badge@text@js:java.t2s(result)",
+      "intro": "@css:.book-intro@text@js:java.t2s(result)",
+      "lastChapter": "@css:.latest a@text@js:java.t2s(result)",
+      "coverUrl": "@css:.book-cover img@src",
+      "bookUrl": "@css:.book-title@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:#html_box .item",
+      "name": "@css:.body .t@text@js:java.t2s(result)",
+      "author": "@css:.body .author@text@js:java.t2s(result)",
+      "kind": "@css:.body span:eq(2)@text@js:java.t2s(result)",
+      "intro": "@css:.body p@text@js:java.t2s(result)",
+      "bookUrl": "@css:a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
+      "author": "@css:[property=\"og:novel:author\"]@content@js:java.t2s(result)",
+      "kind": "@css:[property=\"og:novel:status\"]@content@js:java.t2s(result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
+      "intro": "@css:.book-details .bh_book_title_hide@text##^簡介:\\s*@js:java.t2s(result)",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "tocUrl": "@css:.book-details a[href^=\"/booklist/\"]@href@js:'https://www.wfxs.tw'+result",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:#readerlists ul li a",
+      "chapterName": "text@js:java.t2s(result)",
+      "chapterUrl": "href@js:'https://m.wfxs.tw'+result"
+    },
+    "ruleContent": {
+      "content": "@css:#read_conent_box@html@js:java.t2s(result)"
+    },
+    "weight": 0,
+    "customOrder": 1,
+    "lastUpdateTime": 1795243284402
+  }
+]

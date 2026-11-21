@@ -5,6 +5,7 @@
   text / href / src  直接取当前元素
   ##正则##替换       对结果做替换
   @js:java.t2s(result)  繁体转简体（用 opencc 模拟）
+  @js:'前缀'+result     在结果前面拼一段（比如换域名）
 选择器里的 :eq(n) 按 Jsoup 的意思处理（从 0 开始）。
 
 用法：
@@ -64,8 +65,12 @@ def apply_post(value, regex, js):
         pat, _, rep = regex.partition("##")
         value = re.sub(pat, rep, value)
     if js:
-        if js.strip() == "java.t2s(result)":
+        js = js.strip()
+        prefix = re.fullmatch(r"'([^']*)'\s*\+\s*result", js)
+        if js == "java.t2s(result)":
             value = T2S.convert(value)
+        elif prefix:
+            value = prefix.group(1) + value
         else:
             raise NotImplementedError("测试脚本不支持这段 JS: " + js)
     return value.strip()
@@ -185,6 +190,7 @@ def main():
             check(len(text) > 0, f"{name}：{len(text)} 字，开头：{text[:30]}"
                   + ("（偏短，可能是作者公告，自己看一眼）" if 0 < len(text) < 500 else ""))
             check(not junk, f"{name}：正文里没有广告字样" + (f"（发现 {junk}）" if junk else ""))
+            check(T2S.convert(text) == text, f"{name}：正文是简体")
             time.sleep(0.5)
 
         if src.get("exploreUrl"):
