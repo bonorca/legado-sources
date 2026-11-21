@@ -4,22 +4,35 @@
 
 ## 导入
 
-阅读 APP → 我的 → 书源管理 → ⋮ → 网络导入，粘贴地址：
+阅读 APP → 我的 → 书源管理 → ⋮ → 网络导入，粘贴：
 
-| 站点 | 地址 |
+```
+https://raw.githubusercontent.com/bonorca/legado-sources/main/all.json
+```
+
+打不开时用：
+
+```
+https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
+```
+
+以后新增的书源都会合进这个文件，重新导入一次就能更新。
+
+| 书源 | 站点 |
 |---|---|
-| 笔趣阁 biquge.tw | `https://raw.githubusercontent.com/bonorca/legado-sources/main/sources/biquge-tw.json` |
-| 微风小说 wfxs.tw | `https://raw.githubusercontent.com/bonorca/legado-sources/main/sources/wfxs-tw.json` |
-
-打不开时把 `raw.githubusercontent.com/bonorca/legado-sources/main` 换成 `cdn.jsdelivr.net/gh/bonorca/legado-sources@main`。
+| 笔趣阁 biquge.tw | https://www.biquge.tw |
+| 微风小说 wfxs.tw | https://m.wfxs.tw |
 
 两个站是同一个后台，书和章节一样，可以互相换源。
 
-## 测试
+## 维护
+
+每个站的书源单独放在 `sources/`，改完后合并、测试：
 
 ```bash
 pip install -r tools/requirements.txt
-python tools/test_source.py sources/biquge-tw.json 剑来
+python tools/build.py
+python tools/test_source.py all.json 剑来
 ```
 
 ## 注意
