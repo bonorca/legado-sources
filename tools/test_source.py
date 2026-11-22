@@ -246,8 +246,9 @@ class Runner:
 # ---------- 检查 ----------
 
 class Report:
-    def __init__(self, name):
+    def __init__(self, name, url=""):
         self.name = name
+        self.url = url
         self.failed = {s: [] for s in STAGES}
         self.skipped = set()
 
@@ -265,7 +266,7 @@ JUNK = ["笔趣阁", "biquge", "52书库", "福门", "书吧", "返回顶部", "
 
 
 def test_source(src, key):
-    rep = Report(src["bookSourceName"])
+    rep = Report(src["bookSourceName"], src["bookSourceUrl"])
     r = Runner(src)
     stage = "搜索"
     print(f"\n===== {src['bookSourceName']}  ({src['bookSourceUrl']})  关键词：{key}")
@@ -397,6 +398,7 @@ def main():
     ap.add_argument("file")
     ap.add_argument("keyword", nargs="?")
     ap.add_argument("--summary")
+    ap.add_argument("--json", help="把每个书源的结果写成 JSON，给 tools/maintain.py 用")
     a = ap.parse_args()
     sources = json.load(open(a.file, encoding="utf-8"))
     keywords = json.loads((ROOT / "tools" / "keywords.json").read_text(encoding="utf-8"))
@@ -414,6 +416,11 @@ def main():
             print("   - " + m)
     if a.summary:
         write_summary(a.summary, reports)
+    if a.json:
+        Path(a.json).write_text(json.dumps(
+            [{"url": rp.url, "name": rp.name, "ok": rp.ok,
+              "failed": {s: m for s, m in rp.failed.items() if m}} for rp in reports],
+            ensure_ascii=False, indent=1), encoding="utf-8")
     sys.exit(0 if all(rp.ok for rp in reports) else 1)
 
 

@@ -13,7 +13,7 @@ on:
       - ".github/workflows/check.yml"
 
 permissions:
-  contents: read
+  contents: write # 自动维护要提交改动
   issues: write
 
 concurrency:
@@ -26,6 +26,8 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 自动维护提交前要 pull --rebase
 
       - uses: actions/setup-python@v5
         with:
@@ -43,7 +45,7 @@ jobs:
         id: test
         run: |
           set +e
-          python tools/test_source.py all.json --summary summary.md 2>&1 | tee log.txt
+          python tools/test_source.py all.json --summary summary.md --json results.json 2>&1 | tee log.txt
           code=${PIPESTATUS[0]}
           {
             echo "## 书源检测结果"
@@ -60,13 +62,40 @@ jobs:
           echo "code=$code" >> "$GITHUB_OUTPUT"
           exit 0
 
+      # 只在每天的定时检测里做，这样「连续 2 次失败」就是连续 2 天
+      - name: 自动维护（停用 / 恢复 / 换域名）
+        if: github.event_name == 'schedule'
+        run: |
+          touch maint.md
+          python tools/maintain.py results.json --today "$(TZ=Asia/Shanghai date +%F)" \
+            --report maint.md --commit-msg msg.txt 2>&1 | tee maint_log.txt
+          if [ -s maint.md ]; then
+            { echo "## 自动维护"; echo; cat maint.md; } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -n "$(git status --porcelain)" ]; then
+            msg="$(cat msg.txt)"
+            [ -n "$msg" ] || msg="Auto-maintain: update source status"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A sources all.json tools/keywords.json
+            git add -A status.json 2>/dev/null || true
+            git commit -m "$msg"
+            git pull --rebase origin main
+            git push origin HEAD:main
+            # 让备用地址（jsDelivr）马上拿到新版本
+            curl -s -o /dev/null "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/all.json" || true
+          fi
+
       - name: 有书源失效时开 issue
         if: steps.test.outputs.code != '0'
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          touch maint.md
           body="$(cat summary.md)
+
+          $( [ -s maint.md ] && printf '**自动维护**\n\n' && cat maint.md )
 
           详细日志：$RUN_URL"
           num=$(gh issue list --state open --search "书源检测失败 in:title" --json number --jq '.[0].number')
