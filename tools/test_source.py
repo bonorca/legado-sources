@@ -419,7 +419,9 @@ def main():
     if a.json:
         Path(a.json).write_text(json.dumps(
             [{"url": rp.url, "name": rp.name, "ok": rp.ok,
-              "failed": {s: m for s, m in rp.failed.items() if m}} for rp in reports],
+              "failed": {s: m for s, m in rp.failed.items() if m},
+              "skipped": sorted(rp.skipped - {s for s, m in rp.failed.items() if m}, key=STAGES.index)}
+             for rp in reports],
             ensure_ascii=False, indent=1), encoding="utf-8")
     sys.exit(0 if all(rp.ok for rp in reports) else 1)
 

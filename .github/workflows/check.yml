@@ -72,17 +72,24 @@ jobs:
           if [ -s maint.md ]; then
             { echo "## 自动维护"; echo; cat maint.md; } >> "$GITHUB_STEP_SUMMARY"
           fi
-          if [ -n "$(git status --porcelain)" ]; then
-            msg="$(cat msg.txt)"
-            [ -n "$msg" ] || msg="Auto-maintain: update source status"
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A sources all.json tools/keywords.json
-            git add -A status.json 2>/dev/null || true
-            git commit -m "$msg"
-            git pull --rebase origin main
-            git push origin HEAD:main
-            # 让备用地址（jsDelivr）马上拿到新版本
+
+      # 每次检测完都提交一次：更新 STATUS.md、追加 reports/history.jsonl，连同自动维护的改动一起推送
+      - name: 写检测记录并推送
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python tools/report.py results.json --maint maint.md --trigger "${{ github.event_name }}" \
+            --run-url "$RUN_URL" --commit-msg msg.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          all_changed=$(git status --porcelain all.json)
+          git add -A STATUS.md reports sources all.json tools/keywords.json
+          git add -A status.json 2>/dev/null || true
+          git commit -m "$(cat msg.txt)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          # all.json 有变化时，让备用地址（jsDelivr）马上拿到新版本
+          if [ -n "$all_changed" ]; then
             curl -s -o /dev/null "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/all.json" || true
           fi
 
