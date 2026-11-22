@@ -4,7 +4,7 @@
     "bookSourceName": "思兔 sto9.com",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体。书页只列 36 章，目录改从 /ajax_novels/chapterlist/书号.html 一次取全。正文里夹着被 emoji、花体字拆开的「sto9.com」广告行，以及「（還有更新耶）」，都已去掉；正文开头重复的章节标题也去掉了。只有一个结果时搜索会直接跳到书页，靠 bookUrlPattern 识别。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体。书页只列 36 章，目录改从 /ajax_novels/chapterlist/书号.html 一次取全。正文里夹着被 emoji、各种花体字母（𝘀𝘁𝗼、𝖘𝖙𝖔 等）拆开的「sto9.com」广告行，以及「（還有更新耶）」，都已去掉；正文开头重复的章节标题也去掉了。只有一个结果时搜索会直接跳到书页，靠 bookUrlPattern 识别。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -38,12 +38,12 @@
       "chapterUrl": "href"
     },
     "ruleContent": {
-      "content": "@css:.txtnav@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$|^[^\n]{0,40}[.．][^\n]{0,4}[cｃ𝘤𝗰𝐜𝑐𝒄][^\n]{0,4}[oｏ𝘰𝗼𝐨𝑜𝒐][^\n]{0,4}[mｍ𝘮𝗺𝐦𝑚𝒎][^\n]{0,40}$|^[\\s 　]*（還有更新耶）[\\s 　]*$@js:java.t2s(result)",
+      "content": "@css:.txtnav@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$|^[^\n]{0,40}[.．][^\n]{0,4}[cｃ𝐀-𝟿][^\n]{0,4}[oｏ𝐀-𝟿][^\n]{0,4}[mｍ𝐀-𝟿][^\n]{0,40}$|^[\\s 　]*（還有更新耶）[\\s 　]*$@js:java.t2s(result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 5,
-    "lastUpdateTime": 1795249710013,
+    "lastUpdateTime": 1795369196236,
     "ruleExplore": {
       "bookList": "@css:#article_list_content li",
       "name": "@css:.newnav h3 a@text@js:java.t2s(result)",

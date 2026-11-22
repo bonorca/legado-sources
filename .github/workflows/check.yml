@@ -102,7 +102,7 @@ jobs:
           touch maint.md
           body="$(cat summary.md)
 
-          $( [ -s maint.md ] && printf '**自动维护**\n\n' && cat maint.md )
+          $(if [ -s maint.md ]; then printf '**自动维护**\n\n'; cat maint.md; fi)
 
           详细日志：$RUN_URL"
           num=$(gh issue list --state open --search "书源检测失败 in:title" --json number --jq '.[0].number')
