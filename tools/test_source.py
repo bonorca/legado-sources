@@ -272,7 +272,7 @@ class Report:
         return not any(self.failed.values())
 
 
-JUNK = ["笔趣阁", "biquge", "52书库", "福门", "书吧", "返回顶部", "请收藏", "最新章节", "http", "www."]
+JUNK = ["笔趣阁", "biquge", "52书库", "福门", "书吧", "返回顶部", "请收藏", "请大家收藏", "全网最快", "最新章节", "http", "www."]
 
 
 def test_source(src, key):

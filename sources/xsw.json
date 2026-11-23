@@ -4,7 +4,7 @@
     "bookSourceName": "台湾小说网 xsw.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。手机版目录每页只有 20 章，所以目录改从电脑版 www.xsw.tw/book/书号/ 一次取全（电脑版是 Big5 编码），章节地址再换回手机版。正文开头重复的章节标题已去掉。网站 HTTPS 证书链不完整，阅读 APP 不校验证书，不影响使用。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。手机版目录每页只有 20 章，所以目录改从电脑版 www.xsw.tw/book/书号/ 一次取全（电脑版是 Big5 编码），章节地址再换回手机版。正文开头重复的章节标题，以及末尾「喜欢……请大家收藏」的广告行已去掉。网站 HTTPS 证书链不完整，阅读 APP 不校验证书，不影响使用。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -46,11 +46,11 @@
       "chapterUrl": "href##^/book/##https://m.xsw.tw/"
     },
     "ruleContent": {
-      "content": "@css:#nr1@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$@js:java.t2s(result)",
+      "content": "@css:#nr1@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$|^喜[欢歡][^\n]{0,60}[请請]大家收[藏][^\n]*$@js:java.t2s(result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 11,
-    "lastUpdateTime": 1795433428797
+    "lastUpdateTime": 1795440142084
   }
 ]
