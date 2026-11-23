@@ -1,0 +1,58 @@
+[
+  {
+    "bookSourceUrl": "https://www.wanbenxs.cc",
+    "bookSourceName": "完本小说网 wanbenxs.cc",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。简体站。搜索前网站先回一个空白跳转页并发 Cookie，loginCheckJs 认出这个页面后带着 Cookie 再请求一次就有结果。网站限制两次搜索至少间隔 5 秒，太快会搜不到。目录每页 50 章，靠 nextTocUrl 把下拉框里的各页一次全部打开。一章常分两页，靠 nextContentUrl 接上。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"<title></title><div></div>\") > -1) {\n  r = java.connect(String(r.url()));\n}\nr",
+    "searchUrl": "/search/?searchkey={{key}}",
+    "exploreUrl": "玄幻::/sort/1/{{page}}/\n武侠::/sort/2/{{page}}/\n都市::/sort/3/{{page}}/\n历史::/sort/4/{{page}}/\n网游::/sort/5/{{page}}/\n科幻::/sort/6/{{page}}/\n恐怖::/sort/7/{{page}}/\n女生::/sort/8/{{page}}/\n其他::/sort/9/{{page}}/",
+    "ruleSearch": {
+      "bookList": "@css:.rank .item",
+      "name": "@css:dt a@text",
+      "author": "@css:.btm a@text",
+      "wordCount": "@css:.btm em.orange@text",
+      "intro": "@css:dd@text##^简介:\\s*",
+      "coverUrl": "@css:.image img@data-original",
+      "bookUrl": "@css:dt a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:.rank .item",
+      "name": "@css:dt a@text",
+      "author": "@css:.btm a@text",
+      "wordCount": "@css:.btm em.orange@text",
+      "intro": "@css:dd@text##^简介:\\s*",
+      "coverUrl": "@css:.image img@data-original",
+      "bookUrl": "@css:dt a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content",
+      "author": "@css:[property=\"og:novel:author\"]@content",
+      "kind": "@css:[property=\"og:novel:category\"]@content",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content",
+      "intro": "@css:#intro@text",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "tocUrl": "@css:a.chapterlist@href",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:#list a[rel=chapter]",
+      "chapterName": "text",
+      "chapterUrl": "href",
+      "nextTocUrl": "@css:#indexselect option@value"
+    },
+    "ruleContent": {
+      "content": "@css:#booktxt@html",
+      "nextContentUrl": "@css:#next_url:contains(下一页)@href"
+    },
+    "weight": 0,
+    "customOrder": 14,
+    "lastUpdateTime": 1795443357633
+  }
+]
