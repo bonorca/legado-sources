@@ -1,6 +1,6 @@
 # 书源检测
 
-最近一次：2026-11-23 10:31（北京时间）· 每日定时检测 · **10/11 通过** · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45100217322)
+最近一次：2026-11-23 10:48（北京时间）· 推送后检测 · **10/11 通过** · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45101864079)
 
 | 书源 | 搜索 | 详情 | 目录 | 正文 | 发现 | 状态 |
 |---|---|---|---|---|---|---|
@@ -20,10 +20,6 @@
 
 - 微风小说 wfxs.tw / 搜索：搜到 0 本
 - 微风小说 wfxs.tw / 搜索：出错：IndexError: list index out of range
-
-## 自动维护
-
-- ⚠️ **微风小说 wfxs.tw**：搜索：搜到 0 本（第 1 次失败，连续 2 次才停用）
 
 ## 最近 30 天
 
