@@ -14,7 +14,6 @@ on:
 
 permissions:
   contents: write # 自动维护要提交改动
-  issues: write
 
 concurrency:
   group: check
@@ -93,32 +92,7 @@ jobs:
             curl -s -o /dev/null "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/all.json" || true
           fi
 
-      - name: 有书源失效时开 issue
+      # 不开 issue；有书源没通过时只把这次运行标成失败，结果看 STATUS.md
+      - name: 有书源没通过时标记失败
         if: steps.test.outputs.code != '0'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          touch maint.md
-          body="$(cat summary.md)
-
-          $(if [ -s maint.md ]; then printf '**自动维护**\n\n'; cat maint.md; fi)
-
-          详细日志：$RUN_URL"
-          num=$(gh issue list --state open --search "书源检测失败 in:title" --json number --jq '.[0].number')
-          if [ -n "$num" ]; then
-            gh issue comment "$num" --body "$body"
-          else
-            gh issue create --title "书源检测失败" --body "$body"
-          fi
-          exit 1
-
-      - name: 全部通过时关闭 issue
-        if: steps.test.outputs.code == '0'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          num=$(gh issue list --state open --search "书源检测失败 in:title" --json number --jq '.[0].number')
-          if [ -n "$num" ]; then
-            gh issue close "$num" --comment "$(date -u +%F) 检测全部通过，自动关闭。"
-          fi
+        run: exit 1
