@@ -84,6 +84,7 @@ def split_rule(rule):
 def apply_post(value, regex, js):
     if regex is not None:
         pat, _, rep = regex.partition("##")
+        rep = re.sub(r"\$(\d)", r"\\\1", rep)  # 阅读用 Java 的 $1 引用分组，Python 写成 \1
         value = re.sub(pat, rep, value)
     if js:
         js = js.strip()
@@ -191,7 +192,16 @@ class Runner:
         for n, wait in enumerate([0, 5, 15, 30]):
             time.sleep(wait or 0.6)
             try:
-                r = self.s.request(method, url, data=body, headers=headers, timeout=25)
+                r = self.s.request(method, url, data=body, headers=headers, timeout=45)
+            except requests.exceptions.SSLError:
+                if not self.s.verify:
+                    raise
+                # 阅读 APP 不校验 HTTPS 证书；有的站证书链不完整（缺中间证书），电脑上会报错，APP 里照常能用
+                print("     （证书校验不过，和 APP 一样跳过校验后重试）")
+                import urllib3
+                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+                self.s.verify = False
+                r = self.s.request(method, url, data=body, headers=headers, timeout=45)
             except (requests.ConnectionError, requests.Timeout) as e:
                 if n == 3:
                     raise
@@ -206,7 +216,7 @@ class Runner:
             m = re.search(r"charset=([\w-]+)", r.headers.get("content-type", "")) or \
                 re.search(rb'charset=["\']?([\w-]+)', r.content[:3000])
             cs = (m.group(1) if isinstance(m.group(1), str) else m.group(1).decode()) if m else "utf-8"
-        r.encoding = "gb18030" if cs.lower() in ("gbk", "gb2312") else cs
+        r.encoding = {"gbk": "gb18030", "gb2312": "gb18030", "big5": "big5hkscs"}.get(cs.lower(), cs)
         return r.url, BeautifulSoup(r.text, "lxml")
 
     def book_list(self, url, rules):

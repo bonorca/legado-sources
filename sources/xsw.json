@@ -1,0 +1,56 @@
+[
+  {
+    "bookSourceUrl": "https://m.xsw.tw",
+    "bookSourceName": "台湾小说网 xsw.tw",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。手机版目录每页只有 20 章，所以目录改从电脑版 www.xsw.tw/book/书号/ 一次取全（电脑版是 Big5 编码），章节地址再换回手机版。正文开头重复的章节标题已去掉。网站 HTTPS 证书链不完整，阅读 APP 不校验证书，不影响使用。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "searchUrl": "/modules/article/wap_search.php?searchkey={{key}}&submit=",
+    "exploreUrl": "玄幻魔法::/fenlei1_{{page}}.html\n武侠修真::/fenlei2_{{page}}.html\n都市言情::/fenlei3_{{page}}.html\n历史军事::/fenlei4_{{page}}.html\n网游动漫::/fenlei5_{{page}}.html\n科幻小说::/fenlei6_{{page}}.html\n恐怖灵异::/fenlei7_{{page}}.html\n其他类型::/fenlei8_{{page}}.html",
+    "ruleSearch": {
+      "bookList": "@css:.bookbox",
+      "name": "@css:.bookname a@text@js:java.t2s(result)",
+      "author": "@css:.author@text##^作者：@js:java.t2s(result)",
+      "lastChapter": "@css:.update a@text@js:java.t2s(result)",
+      "intro": "@css:.intro_line@text##^簡介：\\s*@js:java.t2s(result)",
+      "coverUrl": "@css:.bookimg img@src",
+      "bookUrl": "@css:.bookname a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:.bookbox",
+      "name": "@css:.bookname a@text@js:java.t2s(result)",
+      "author": "@css:.author@text##^作者：@js:java.t2s(result)",
+      "lastChapter": "@css:.update a@text@js:java.t2s(result)",
+      "intro": "@css:.intro_line@text##^簡介：\\s*@js:java.t2s(result)",
+      "coverUrl": "@css:.bookimg img@src",
+      "bookUrl": "@css:.bookname a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:.block_txt2 h2@text@js:java.t2s(result)",
+      "author": "@css:.block_txt2 a[href^=\"/author/\"]@text@js:java.t2s(result)",
+      "kind": "@css:.block_txt2 a[href^=\"/fenlei\"]@text@js:java.t2s(result)",
+      "lastChapter": "@css:.block_txt2 p:last-child a@text@js:java.t2s(result)",
+      "intro": "@css:.intro_info@text@js:java.t2s(result)",
+      "coverUrl": "@css:.block_img2 img@src",
+      "tocUrl": "@css:.ablum_read a[href$=\"page-1.html\"]@href##^/(\\d+)/page-1\\.html$##https://www.xsw.tw/book/$1/",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:.liebiao li a",
+      "chapterName": "text@js:java.t2s(result)",
+      "chapterUrl": "href##^/book/##https://m.xsw.tw/"
+    },
+    "ruleContent": {
+      "content": "@css:#nr1@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$@js:java.t2s(result)",
+      "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
+    },
+    "weight": 0,
+    "customOrder": 11,
+    "lastUpdateTime": 1795433428797
+  }
+]
