@@ -5,7 +5,8 @@
   2. 被 bot 停用的书源重新通过检测 → 恢复启用
   3. 检测失败、而且首页跳转到了新域名 → 用新域名把整套测试再跑一遍，通过才改过去
 
-它不会修改失效的规则（网站改版），那种情况只会停用并在 issue 里报告。
+「受限」（网站把检测的请求挡了，规则本身没坏）不算失败：不计入连续失败次数，只记下连续受限了几天。
+它不会修改失效的规则（网站改版），那种情况只会停用，在 README 底部的检测结果里能看到。
 用户自己手动停用的书源（不是 bot 停的）不会被动。
 
 用法：
@@ -54,7 +55,7 @@ def first_error(failed):
     return "未知错误"
 
 
-def try_new_domain(src, key):
+def try_new_domain(src, key, book=None):
     """首页跳到别的域名时，换成新域名重测；通过就返回新书源，否则返回 None。"""
     old = origin(src["bookSourceUrl"])
     try:
@@ -67,7 +68,7 @@ def try_new_domain(src, key):
     cand = json.loads(json.dumps(src, ensure_ascii=False).replace(old, new))
     cand["bookSourceUrl"] = new
     print(f"\n>>> {src['bookSourceName']} 的首页从 {old} 跳到了 {new}，用新域名重测")
-    rep = T.test_source(cand, key)
+    rep = T.test_source(cand, key, book.replace(old, new) if book else None)
     return (cand, new) if rep.ok else (None, new)
 
 
@@ -100,8 +101,17 @@ def main():
         src = files[f][i]
         st = status.get(url, {"fail_streak": 0, "disabled_by_bot": False})
 
-        if res["ok"]:
+        if res["ok"] and res.get("blocked"):
+            # 受限：规则没查出问题，但有一步被网站挡了。连续失败次数不变，也不据此恢复启用
+            st["blocked_streak"] = st.get("blocked_streak", 0) + 1
+            st["last_blocked"] = a.today
+            first = next(f"{s}：{m[0]}" for s, m in res["blocked"].items() if m)
+            st["last_block"] = first[:120]
+            actions.append(f"⚠️ **{name}** 受限（连续 {st['blocked_streak']} 天）：{first}")
+        elif res["ok"]:
             st["fail_streak"] = 0
+            for k in ("blocked_streak", "last_blocked", "last_block"):
+                st.pop(k, None)
             st.pop("last_fail", None)
             st.pop("last_error", None)
             if st.get("disabled_by_bot"):
@@ -117,7 +127,8 @@ def main():
             st["last_fail"] = a.today
             st["last_error"] = first_error(res["failed"])
 
-            cand, new = try_new_domain(src, keywords.get(url, ""))
+            key, book = T.keyword_entry(keywords, url)
+            cand, new = try_new_domain(src, key or "", book)
             if cand:
                 was_bot_disabled = st.get("disabled_by_bot")
                 if was_bot_disabled:
@@ -126,7 +137,10 @@ def main():
                     cand["bookSourceComment"] = PREFIX_RE.sub("", cand.get("bookSourceComment", ""))
                 files[f][i] = src = cand
                 touched.add((f, i))
-                keywords[cand["bookSourceUrl"]] = keywords.pop(url, "")
+                kw = keywords.pop(url, "")
+                if isinstance(kw, dict) and kw.get("book"):
+                    kw["book"] = kw["book"].replace(origin(url), origin(cand["bookSourceUrl"]))
+                keywords[cand["bookSourceUrl"]] = kw
                 status.pop(url, None)
                 url = cand["bookSourceUrl"]
                 st = {"fail_streak": 0, "disabled_by_bot": False}
@@ -148,7 +162,7 @@ def main():
                 actions.append(f"⚠️ **{name}**：{st['last_error']}（{note}）")
 
         # 只记录有问题的书源，全部正常时 status.json 不变，bot 就不会每天提交
-        if st.get("fail_streak") or st.get("disabled_by_bot"):
+        if st.get("fail_streak") or st.get("disabled_by_bot") or st.get("blocked_streak"):
             st["name"] = name
             status[url] = st
         else:

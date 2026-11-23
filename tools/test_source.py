@@ -13,6 +13,10 @@
   loginCheckJs       只认一种写法：响应里有某段字（拦截页）就用 java.connect 带着 Cookie 再请求一次
 选择器里的 :eq(n) 按 Jsoup 的意思处理（从 0 开始），:contains() 也能用。
 
+结果分三种：✅ 通过；❌ 规则有问题（页面正常打开了，但规则取不到东西）；
+⚠️ 受限（网站把请求挡了：403/429/503、Cloudflare 验证、「搜索间隔」之类的提示页），受限不算失败。
+搜索失败或受限时，如果 tools/keywords.json 里给了固定的书页地址，就用它接着测详情、目录、正文。
+
 用法：
   python tools/test_source.py all.json                 每个书源用 tools/keywords.json 里的书名测
   python tools/test_source.py sources/xx.json 剑来      指定书名
@@ -178,6 +182,25 @@ def split_url(url):
 
 # ---------- 请求 ----------
 
+class Blocked(Exception):
+    """网站把请求挡了（不是规则的问题）。"""
+
+
+BLOCK_TEXT = re.compile(r"Just a moment|cf-chl|cf_chl_opt|challenge-platform/h/|Verify you are human|"
+                        r"搜索间隔|搜索过于频繁|操作过于频繁|访问过于频繁|请求过于频繁|人机验证|安全验证")
+
+
+def blocked_reason(r):
+    if r.status_code in (403, 429, 503):
+        return f"网站拒绝访问（HTTP {r.status_code}）"
+    if len(r.content) < 50000:  # 拦截页都很小；正常网页里偶尔出现这些字不算
+        raw = r.content.decode("utf-8", "ignore") + r.content.decode("gb18030", "ignore")
+        m = BLOCK_TEXT.search(raw)
+        if m:
+            return f"网站返回了拦截页（「{m.group(0)}」）"
+    return None
+
+
 class Runner:
     def __init__(self, src):
         self.src = src
@@ -221,6 +244,9 @@ class Runner:
                 print("     （碰到拦截页，和 loginCheckJs 一样带着 Cookie 再请求一次）")
                 time.sleep(0.6)
                 r = self.s.request(method, url, data=body, headers=headers, timeout=45)
+        why = blocked_reason(r)
+        if why:
+            raise Blocked(why)
         r.raise_for_status()
         cs = opt.get("charset")
         if not cs:  # 和 APP 一样：没写 charset 就看响应头和网页里的 <meta charset>
@@ -271,7 +297,20 @@ class Report:
         self.name = name
         self.url = url
         self.failed = {s: [] for s in STAGES}
+        self.blocked = {s: [] for s in STAGES}
         self.skipped = set()
+        self.book_url = ""
+
+    def record(self, stage, e):
+        """某一步抛了异常：被网站挡了记「受限」，其余记「失败」。"""
+        if isinstance(e, Blocked):
+            print(f"  ⚠ 受限：{e}")
+            self.blocked[stage].append(str(e))
+        else:
+            msg = f"出错：{type(e).__name__}: {e}"[:200]
+            print("  ✗ " + msg)
+            traceback.print_exc(limit=1)
+            self.failed[stage].append(msg)
 
     def check(self, stage, cond, msg):
         print(("  ✓ " if cond else "  ✗ ") + msg)
@@ -282,15 +321,26 @@ class Report:
     def ok(self):
         return not any(self.failed.values())
 
+    @property
+    def limited(self):
+        return any(self.blocked.values())
+
 
 JUNK = ["笔趣阁", "biquge", "52书库", "福门", "书吧", "返回顶部", "请收藏", "请大家收藏", "全网最快", "最新章节", "http", "www."]
 
 
-def test_source(src, key):
+class StopStage(Exception):
+    """这一步已经记了失败，不用再往下做。"""
+
+
+def test_source(src, key, book=None):
+    """book：固定的书页地址，搜索失败或受限时用它接着测。"""
     rep = Report(src["bookSourceName"], src["bookSourceUrl"])
     r = Runner(src)
-    stage = "搜索"
     print(f"\n===== {src['bookSourceName']}  ({src['bookSourceUrl']})  关键词：{key}")
+
+    hit = None
+    stage = "搜索"
     try:
         print(f"\n[搜索] {key}")
         books = r.book_list(fill_url(src["searchUrl"], key, 1), src["ruleSearch"])
@@ -303,6 +353,8 @@ def test_source(src, key):
                       "bookUrl": r.last_url}]
             print(f"     （搜索直接跳到了书页 {r.last_url}）")
         rep.check(stage, len(books) > 0, f"搜到 {len(books)} 本")
+        if not books:
+            raise StopStage
         for b in books[:3]:
             print(f"     {b['name']} / {b['author']} / {b['kind']} / 最新：{b['lastChapter']}")
         rep.check(stage, all(b["name"] and b["bookUrl"] for b in books), "每本都有书名和链接")
@@ -312,74 +364,97 @@ def test_source(src, key):
             books2 = r.book_list(fill_url(src["searchUrl"], key, 2), src["ruleSearch"])
             rep.check(stage, books2 and books2[0]["bookUrl"] != books[0]["bookUrl"], f"第 2 页能翻（{len(books2)} 本）")
 
-        stage = "详情"
-        print(f"\n[详情] {hit['bookUrl']}")
-        info_url, soup = r.fetch(hit["bookUrl"])
-        ri = src["ruleBookInfo"]
-        info = {k: get_string(soup, ri.get(k)) for k in
-                ["name", "author", "kind", "wordCount", "lastChapter", "intro", "coverUrl", "tocUrl"]}
-        for k, v in info.items():
-            print(f"     {k}: {v[:60]}")
-        rep.check(stage, info["name"] == hit["name"], "详情页书名和搜索结果一致")
-        if not ri.get("author"):
-            print("     （详情页不取作者，沿用搜索结果里的）")
-        elif hit["author"]:
-            rep.check(stage, info["author"] == hit["author"].rstrip("."), "详情页作者和搜索结果一致")
-        else:
-            rep.check(stage, bool(info["author"]), f"详情页有作者（搜索结果里没有作者）：{info['author']}")
-        rep.check(stage, bool(info["intro"]), "有简介")
-        if ri.get("tocUrl"):
-            rep.check(stage, bool(info["tocUrl"]), "有目录地址")
+        rep.book_url = hit["bookUrl"]
+    except StopStage:
+        hit = None
+    except Exception as e:
+        rep.record(stage, e)
+        hit = None
 
-        stage = "目录"
-        print("\n[目录]")
-        if info["tocUrl"]:
-            toc_url, soup = r.fetch(urljoin(info_url, info["tocUrl"]))
-        else:
-            toc_url = info_url  # 没写目录地址时，APP 直接在详情页上找目录
-        rt = src["ruleToc"]
-        pages = [(toc_url, soup)]
-        nxt = [urljoin(toc_url, u) for u in get_string(soup, rt.get("nextTocUrl")).split(chr(10)) if u.strip()]
-        nxt = [u for u in dict.fromkeys(nxt) if u != toc_url]
-        if len(nxt) > 1:  # 和 APP 一样：一次给出多个地址就全部打开
-            pages += [r.fetch(u) for u in nxt]
-        while len(nxt) == 1 and nxt[0] not in {u for u, _ in pages} and len(pages) < 200:
-            pages.append(r.fetch(nxt[0]))
-            nxt = [urljoin(pages[-1][0], u) for u in get_string(pages[-1][1], rt.get("nextTocUrl")).split(chr(10)) if u.strip()][:1]
-        if len(pages) > 1:
-            print(f"     目录共 {len(pages)} 页")
-        chs = [(get_string(a, rt["chapterName"]), urljoin(u, get_string(a, rt["chapterUrl"])))
-               for u, sp in pages for a in get_elements(sp, rt["chapterList"])]
-        rep.check(stage, len(chs) > 0, f"共 {len(chs)} 章")
-        print(f"     第一章：{chs[0][0]}  {chs[0][1]}")
-        print(f"     最后一章：{chs[-1][0]}  {chs[-1][1]}")
-        rep.check(stage, len({u for _, u in chs}) == len(chs), "章节地址没有重复")
-        rep.check(stage, all(n for n, _ in chs), "每章都有标题")
+    if hit is None and book:
+        print(f"\n     （搜索没拿到书，改用固定的书接着测：{book}）")
+        hit = {"bookUrl": book, "name": "", "author": ""}
+    if hit is None:
+        rep.skipped |= {"详情", "目录", "正文"}
+    else:
+        try:
+            stage = "详情"
+            print(f"\n[详情] {hit['bookUrl']}")
+            info_url, soup = r.fetch(hit["bookUrl"])
+            ri = src["ruleBookInfo"]
+            info = {k: get_string(soup, ri.get(k)) for k in
+                    ["name", "author", "kind", "wordCount", "lastChapter", "intro", "coverUrl", "tocUrl"]}
+            for k, v in info.items():
+                print(f"     {k}: {v[:60]}")
+            if hit["name"]:
+                rep.check(stage, info["name"] == hit["name"], "详情页书名和搜索结果一致")
+            else:
+                rep.check(stage, bool(info["name"]), f"详情页有书名：{info['name']}")
+            if not ri.get("author"):
+                print("     （详情页不取作者，沿用搜索结果里的）")
+            elif hit["author"]:
+                rep.check(stage, info["author"] == hit["author"].rstrip("."), "详情页作者和搜索结果一致")
+            else:
+                rep.check(stage, bool(info["author"]), f"详情页有作者（搜索结果里没有作者）：{info['author']}")
+            rep.check(stage, bool(info["intro"]), "有简介")
+            if ri.get("tocUrl"):
+                rep.check(stage, bool(info["tocUrl"]), "有目录地址")
 
-        stage = "正文"
-        print("\n[正文]")
-        for i in sorted({0, len(chs) // 2, len(chs) - 1}):
-            name, u = chs[i]
-            nxt = chs[i + 1][1] if i + 1 < len(chs) else None
-            text, pages = r.content(u, nxt)
-            junk = [w for w in JUNK if w in text]
-            # 站点自己的域名：先把花体字母归一、去掉 emoji 和符号，再找（例：𝘀𝘁𝗼𝟵.𝗰𝗼𝗺、sto🎉9.com）
-            flat = re.sub(r"[^a-z0-9\n]", "", unicodedata.normalize("NFKC", text).lower())
-            label = re.sub(r"^(www|m|wap)\.", "", src["bookSourceUrl"].split("//")[-1].split("/")[0]).split(".")[0]
-            hits = [ln for ln in flat.split("\n") if label + "com" in ln or label + "net" in ln or label + "cc" in ln]
-            if hits:
-                junk.append(f"{label} 域名广告 {len(hits)} 处")
-            # 繁转简漏掉的「著」（看著、跟著）
-            zhe = re.findall(r"(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])", text)
-            if zhe:
-                junk.append(f"「著」没改成「着」{len(zhe)} 处")
-            rep.check(stage, len(text) > 0, f"{name}：{len(text)} 字" + (f"（{pages} 页拼起来）" if pages > 1 else "")
-                      + f"，开头：{text[:30]}" + ("（偏短，可能是作者公告，自己看一眼）" if 0 < len(text) < 500 else ""))
-            rep.check(stage, not junk, f"{name}：正文里没有广告字样" + (f"（发现 {junk}）" if junk else ""))
-            changed = sum(a != b for a, b in zip(text, T2S.convert(text)))
-            rep.check(stage, changed <= len(text) * 0.002,
-                      f"{name}：正文是简体" + (f"（有 {changed} 个字会被繁转简改动，多半是人名地名）" if changed else ""))
+            stage = "目录"
+            print("\n[目录]")
+            if info["tocUrl"]:
+                toc_url, soup = r.fetch(urljoin(info_url, info["tocUrl"]))
+            else:
+                toc_url = info_url  # 没写目录地址时，APP 直接在详情页上找目录
+            rt = src["ruleToc"]
+            pages = [(toc_url, soup)]
+            nxt = [urljoin(toc_url, u) for u in get_string(soup, rt.get("nextTocUrl")).split(chr(10)) if u.strip()]
+            nxt = [u for u in dict.fromkeys(nxt) if u != toc_url]
+            if len(nxt) > 1:  # 和 APP 一样：一次给出多个地址就全部打开
+                pages += [r.fetch(u) for u in nxt]
+            while len(nxt) == 1 and nxt[0] not in {u for u, _ in pages} and len(pages) < 200:
+                pages.append(r.fetch(nxt[0]))
+                nxt = [urljoin(pages[-1][0], u) for u in get_string(pages[-1][1], rt.get("nextTocUrl")).split(chr(10)) if u.strip()][:1]
+            if len(pages) > 1:
+                print(f"     目录共 {len(pages)} 页")
+            chs = [(get_string(a, rt["chapterName"]), urljoin(u, get_string(a, rt["chapterUrl"])))
+                   for u, sp in pages for a in get_elements(sp, rt["chapterList"])]
+            rep.check(stage, len(chs) > 0, f"共 {len(chs)} 章")
+            print(f"     第一章：{chs[0][0]}  {chs[0][1]}")
+            print(f"     最后一章：{chs[-1][0]}  {chs[-1][1]}")
+            rep.check(stage, len({u for _, u in chs}) == len(chs), "章节地址没有重复")
+            rep.check(stage, all(n for n, _ in chs), "每章都有标题")
 
+            stage = "正文"
+            print("\n[正文]")
+            for i in sorted({0, len(chs) // 2, len(chs) - 1}):
+                name, u = chs[i]
+                nxt = chs[i + 1][1] if i + 1 < len(chs) else None
+                text, pages = r.content(u, nxt)
+                junk = [w for w in JUNK if w in text]
+                # 站点自己的域名：先把花体字母归一、去掉 emoji 和符号，再找（例：𝘀𝘁𝗼𝟵.𝗰𝗼𝗺、sto🎉9.com）
+                flat = re.sub(r"[^a-z0-9\n]", "", unicodedata.normalize("NFKC", text).lower())
+                label = re.sub(r"^(www|m|wap)\.", "", src["bookSourceUrl"].split("//")[-1].split("/")[0]).split(".")[0]
+                hits = [ln for ln in flat.split("\n") if label + "com" in ln or label + "net" in ln or label + "cc" in ln]
+                if hits:
+                    junk.append(f"{label} 域名广告 {len(hits)} 处")
+                # 繁转简漏掉的「著」（看著、跟著）
+                zhe = re.findall(r"(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])", text)
+                if zhe:
+                    junk.append(f"「著」没改成「着」{len(zhe)} 处")
+                rep.check(stage, len(text) > 0, f"{name}：{len(text)} 字" + (f"（{pages} 页拼起来）" if pages > 1 else "")
+                          + f"，开头：{text[:30]}" + ("（偏短，可能是作者公告，自己看一眼）" if 0 < len(text) < 500 else ""))
+                rep.check(stage, not junk, f"{name}：正文里没有广告字样" + (f"（发现 {junk}）" if junk else ""))
+                changed = sum(a != b for a, b in zip(text, T2S.convert(text)))
+                rep.check(stage, changed <= len(text) * 0.002,
+                          f"{name}：正文是简体" + (f"（有 {changed} 个字会被繁转简改动，多半是人名地名）" if changed else ""))
+
+        except Exception as e:
+            rep.record(stage, e)
+            for s in STAGES[STAGES.index(stage) + 1:STAGES.index("正文") + 1]:
+                rep.skipped.add(s)
+
+    try:
         stage = "发现"
         if src.get("exploreUrl"):
             print("\n[发现]")
@@ -402,28 +477,35 @@ def test_source(src, key):
         else:
             rep.skipped.add(stage)
     except Exception as e:
-        msg = f"出错：{type(e).__name__}: {e}"[:200]
-        print("  ✗ " + msg)
-        traceback.print_exc(limit=1)
-        rep.failed[stage].append(msg)
-        for s in STAGES[STAGES.index(stage) + 1:]:
-            rep.skipped.add(s)
+        rep.record(stage, e)
     return rep
+
+def cell(failed, blocked, skipped, s):
+    if failed.get(s):
+        return "❌"
+    if blocked.get(s):
+        return "⚠️"
+    return "—" if s in skipped else "✅"
 
 
 def write_summary(path, reports):
     lines = ["| 书源 | " + " | ".join(STAGES) + " |", "|---" * (len(STAGES) + 1) + "|"]
     for rp in reports:
-        cells = ["—" if s in rp.skipped and not rp.failed[s] else ("❌" if rp.failed[s] else "✅") for s in STAGES]
+        cells = [cell(rp.failed, rp.blocked, rp.skipped, s) for s in STAGES]
         lines.append(f"| {rp.name} | " + " | ".join(cells) + " |")
-    bad = [rp for rp in reports if not rp.ok]
-    if bad:
-        lines.append("\n**没通过的项目**\n")
-        for rp in bad:
-            for s in STAGES:
-                for m in rp.failed[s]:
-                    lines.append(f"- {rp.name} / {s}：{m}")
+    notes = [f"- ❌ {rp.name} / {s}：{m}" for rp in reports for s in STAGES for m in rp.failed[s]]
+    notes += [f"- ⚠️ {rp.name} / {s}：{m}" for rp in reports for s in STAGES for m in rp.blocked[s]]
+    if notes:
+        lines += ["", "**问题**", ""] + notes
     Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def keyword_entry(keywords, url):
+    """tools/keywords.json 里一项可以只写书名，也可以写 {"key": 书名, "book": 固定的书页地址}。"""
+    v = keywords.get(url)
+    if isinstance(v, dict):
+        return v.get("key"), v.get("book")
+    return v, None
 
 
 def main():
@@ -437,15 +519,18 @@ def main():
     keywords = json.loads((ROOT / "tools" / "keywords.json").read_text(encoding="utf-8"))
     reports = []
     for src in sources:
-        key = a.keyword or keywords.get(src["bookSourceUrl"])
+        key, book = keyword_entry(keywords, src["bookSourceUrl"])
+        key = a.keyword or key
         if not key:
             sys.exit(f"tools/keywords.json 里没有 {src['bookSourceUrl']} 的测试书名")
-        reports.append(test_source(src, key))
+        reports.append(test_source(src, key, book))
     print("\n========== 汇总")
     for rp in reports:
         bad = [m for s in STAGES for m in rp.failed[s]]
-        print(("✅ " if rp.ok else "❌ ") + rp.name + ("" if rp.ok else f"（{len(bad)} 项没通过）"))
-        for m in bad:
+        lim = [m for s in STAGES for m in rp.blocked[s]]
+        mark = "❌ " if bad else ("⚠️ " if lim else "✅ ")
+        print(mark + rp.name + (f"（{len(bad)} 项没通过）" if bad else ("（受限）" if lim else "")))
+        for m in bad + lim:
             print("   - " + m)
     if a.summary:
         write_summary(a.summary, reports)
@@ -453,7 +538,10 @@ def main():
         Path(a.json).write_text(json.dumps(
             [{"url": rp.url, "name": rp.name, "ok": rp.ok,
               "failed": {s: m for s, m in rp.failed.items() if m},
-              "skipped": sorted(rp.skipped - {s for s, m in rp.failed.items() if m}, key=STAGES.index)}
+              "blocked": {s: m for s, m in rp.blocked.items() if m},
+              "skipped": sorted(rp.skipped - {s for s, m in rp.failed.items() if m}
+                                - {s for s, m in rp.blocked.items() if m}, key=STAGES.index),
+              "book_url": rp.book_url}
              for rp in reports],
             ensure_ascii=False, indent=1), encoding="utf-8")
     sys.exit(0 if all(rp.ok for rp in reports) else 1)

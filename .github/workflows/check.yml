@@ -41,11 +41,9 @@ jobs:
         run: python tools/build.py --check
 
       - name: 逐个测试书源
-        id: test
         run: |
           set +e
           python tools/test_source.py all.json --summary summary.md --json results.json 2>&1 | tee log.txt
-          code=${PIPESTATUS[0]}
           {
             echo "## 书源检测结果"
             echo
@@ -58,7 +56,6 @@ jobs:
             echo '```'
             echo "</details>"
           } >> "$GITHUB_STEP_SUMMARY"
-          echo "code=$code" >> "$GITHUB_OUTPUT"
           exit 0
 
       # 只在每天的定时检测里做，这样「连续 2 次失败」就是连续 2 天
@@ -72,7 +69,8 @@ jobs:
             { echo "## 自动维护"; echo; cat maint.md; } >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      # 每次检测完都提交一次：更新 STATUS.md、追加 reports/history.jsonl，连同自动维护的改动一起推送
+      # 每次检测完都提交一次：更新 README 底部的书源状态、追加 reports/history.jsonl，连同自动维护的改动一起推送
+      # 有书源没通过也不把这次运行标成失败（免得天天收邮件），结果看 README
       - name: 写检测记录并推送
         env:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -82,7 +80,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           all_changed=$(git status --porcelain all.json)
-          git add -A STATUS.md reports sources all.json tools/keywords.json
+          git add -A README.md reports sources all.json tools/keywords.json
           git add -A status.json 2>/dev/null || true
           git commit -m "$(cat msg.txt)"
           git pull --rebase origin main
@@ -91,8 +89,3 @@ jobs:
           if [ -n "$all_changed" ]; then
             curl -s -o /dev/null "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/all.json" || true
           fi
-
-      # 不开 issue；有书源没通过时只把这次运行标成失败，结果看 STATUS.md
-      - name: 有书源没通过时标记失败
-        if: steps.test.outputs.code != '0'
-        run: exit 1

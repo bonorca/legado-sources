@@ -1,17 +1,62 @@
 {
-  "https://www.biquge.tw": "剑来",
-  "https://m.wfxs.tw": "剑来",
-  "https://www.52shuku.net": "港夜春山",
-  "https://www.biquge78.cc": "剑来",
-  "https://www.wuxiayue.com": "剑来",
-  "https://sto9.com": "仙道尽头",
-  "https://www.ggd66.com": "剑来",
-  "https://jpxs123.top": "剑来",
-  "https://tianyashuku.net": "斗罗大陆",
-  "https://www.sangshixs.com": "斗罗大陆",
-  "https://www.mianfeixiaoshuoyueduwang.com": "剑来",
-  "https://m.xsw.tw": "葬神棺",
-  "https://ixdzs.tw": "剑来",
-  "https://ttks.tw": "剑来",
-  "https://www.wanbenxs.cc": "小人类软又横"
+  "https://www.biquge.tw": {
+    "key": "剑来",
+    "book": "https://www.biquge.tw/book/56184.html"
+  },
+  "https://m.wfxs.tw": {
+    "key": "剑来",
+    "book": "https://m.wfxs.tw/xiaoshuo/31205/"
+  },
+  "https://www.52shuku.net": {
+    "key": "港夜春山",
+    "book": "https://www.52shuku.net/yanqing/20_b/bkgaF.html"
+  },
+  "https://www.biquge78.cc": {
+    "key": "剑来",
+    "book": "https://www.biquge78.cc/go/13947/"
+  },
+  "https://www.wuxiayue.com": {
+    "key": "剑来",
+    "book": "https://www.wuxiayue.com/novellist/qgj"
+  },
+  "https://sto9.com": {
+    "key": "仙道尽头",
+    "book": "https://sto9.com/book/12058.html"
+  },
+  "https://www.ggd66.com": {
+    "key": "剑来",
+    "book": "https://www.ggd66.com/qu/86700/"
+  },
+  "https://jpxs123.top": {
+    "key": "剑来",
+    "book": "https://jpxs123.top/book/10982.html"
+  },
+  "https://tianyashuku.net": {
+    "key": "斗罗大陆",
+    "book": "https://tianyashuku.net/wangluo/1628/"
+  },
+  "https://www.sangshixs.com": {
+    "key": "斗罗大陆",
+    "book": "https://www.sangshixs.com/1539/"
+  },
+  "https://www.mianfeixiaoshuoyueduwang.com": {
+    "key": "剑来",
+    "book": "https://www.mianfeixiaoshuoyueduwang.com/book/1107/"
+  },
+  "https://m.xsw.tw": {
+    "key": "葬神棺",
+    "book": "https://m.xsw.tw/1713745/"
+  },
+  "https://ixdzs.tw": {
+    "key": "剑来",
+    "book": "https://ixdzs.tw/read/167176/"
+  },
+  "https://ttks.tw": {
+    "key": "剑来",
+    "book": "https://ttks.tw/novel/chapters/jianlai/index.html"
+  },
+  "https://www.wanbenxs.cc": {
+    "key": "小人类软又横",
+    "book": "https://www.wanbenxs.cc/xs/231631/"
+  }
 }
