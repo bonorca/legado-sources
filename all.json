@@ -618,5 +618,63 @@
     "weight": 0,
     "customOrder": 11,
     "lastUpdateTime": 1795433428797
+  },
+  {
+    "bookSourceUrl": "https://ixdzs.tw",
+    "bookSourceName": "爱下电子书 ixdzs.tw",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。网站会拦带浏览器标识（Mozilla…）的非浏览器请求，所以请求头用阅读自己的网络库标识 okhttp/4.12.0。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」改成「着」。书页只列前 80 章，目录改用网站自己的接口 POST /novel/html 一次取全。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"okhttp/4.12.0\"}",
+    "searchUrl": "/bsearch?q={{key}}&page={{page}}",
+    "exploreUrl": "玄幻奇幻::/sort/1/index-0-0-0-{{page}}.html\n修真仙侠::/sort/2/index-0-0-0-{{page}}.html\n都市生活::/sort/3/index-0-0-0-{{page}}.html\n历史军事::/sort/4/index-0-0-0-{{page}}.html\n游戏::/sort/5/index-0-0-0-{{page}}.html\n科幻::/sort/6/index-0-0-0-{{page}}.html\n现代言情::/sort/7/index-0-0-0-{{page}}.html\n耽美::/sort/8/index-0-0-0-{{page}}.html\n古代言情::/sort/9/index-0-0-0-{{page}}.html\n武侠::/sort/10/index-0-0-0-{{page}}.html\n悬疑灵异::/sort/12/index-0-0-0-{{page}}.html\n二次元同人::/sort/18/index-0-0-0-{{page}}.html",
+    "ruleSearch": {
+      "bookList": "@css:ul.u-list li",
+      "name": "@css:h3.bname a@text@js:java.t2s(result)",
+      "author": "@css:.bauthor a@text@js:java.t2s(result)",
+      "kind": "@css:.lz@text@js:java.t2s(result)",
+      "wordCount": "@css:.size@text@js:java.t2s(result)",
+      "intro": "@css:.l-p2@text@js:java.t2s(result)",
+      "lastChapter": "@css:.l-chapter@text@js:java.t2s(result)",
+      "coverUrl": "@css:.l-img img@src",
+      "bookUrl": "@css:h3.bname a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:ul.u-list li",
+      "name": "@css:h3.bname a@text@js:java.t2s(result)",
+      "author": "@css:.bauthor a@text@js:java.t2s(result)",
+      "kind": "@css:.lz@text@js:java.t2s(result)",
+      "wordCount": "@css:.size@text@js:java.t2s(result)",
+      "intro": "@css:.l-p2@text@js:java.t2s(result)",
+      "lastChapter": "@css:.l-chapter@text@js:java.t2s(result)",
+      "coverUrl": "@css:.l-img img@src",
+      "bookUrl": "@css:h3.bname a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
+      "author": "@css:[property=\"og:novel:author\"]@content@js:java.t2s(result)",
+      "kind": "@css:[property=\"og:novel:category\"]@content@js:java.t2s(result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
+      "intro": "@css:p#intro@ownText@js:java.t2s(result)",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "tocUrl": "@css:[property=\"og:novel:read_url\"]@content##^.*/read/(\\d+)/.*$##/novel/html,{\"method\":\"POST\",\"body\":\"bid=$1\"}",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:li a",
+      "chapterName": "text@js:java.t2s(result)",
+      "chapterUrl": "href"
+    },
+    "ruleContent": {
+      "content": "@css:article.page-content section@html@js:java.t2s(result)",
+      "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
+    },
+    "weight": 0,
+    "customOrder": 12,
+    "lastUpdateTime": 1795434204793
   }
 ]
