@@ -9,6 +9,8 @@
   地址,{"method":"POST","body":"..."}   POST 请求
   {{表达式}}           地址里的 JS，交给 node 计算
   nextContentUrl / replaceRegex   正文分页和正文替换
+  nextTocUrl         目录分页：取到一个地址就一页页往下翻，取到多个就全部打开
+  loginCheckJs       只认一种写法：响应里有某段字（拦截页）就用 java.connect 带着 Cookie 再请求一次
 选择器里的 :eq(n) 按 Jsoup 的意思处理（从 0 开始），:contains() 也能用。
 
 用法：
@@ -210,6 +212,15 @@ class Runner:
             if r.status_code != 429:
                 break
             print(f"     （429 限流，{wait or 5} 秒后重试）")
+        chk = self.src.get("loginCheckJs")
+        if chk:
+            m = re.search(r'indexOf\("([^"]+)"\)\s*>\s*-1', chk)
+            if not (m and "java.connect(" in chk):
+                raise NotImplementedError("测试脚本不支持这段 loginCheckJs: " + chk)
+            if m.group(1) in r.text:
+                print("     （碰到拦截页，和 loginCheckJs 一样带着 Cookie 再请求一次）")
+                time.sleep(0.6)
+                r = self.s.request(method, url, data=body, headers=headers, timeout=45)
         r.raise_for_status()
         cs = opt.get("charset")
         if not cs:  # 和 APP 一样：没写 charset 就看响应头和网页里的 <meta charset>
@@ -310,7 +321,9 @@ def test_source(src, key):
         for k, v in info.items():
             print(f"     {k}: {v[:60]}")
         rep.check(stage, info["name"] == hit["name"], "详情页书名和搜索结果一致")
-        if hit["author"]:
+        if not ri.get("author"):
+            print("     （详情页不取作者，沿用搜索结果里的）")
+        elif hit["author"]:
             rep.check(stage, info["author"] == hit["author"].rstrip("."), "详情页作者和搜索结果一致")
         else:
             rep.check(stage, bool(info["author"]), f"详情页有作者（搜索结果里没有作者）：{info['author']}")
@@ -325,8 +338,18 @@ def test_source(src, key):
         else:
             toc_url = info_url  # 没写目录地址时，APP 直接在详情页上找目录
         rt = src["ruleToc"]
-        chs = [(get_string(a, rt["chapterName"]), urljoin(toc_url, get_string(a, rt["chapterUrl"])))
-               for a in get_elements(soup, rt["chapterList"])]
+        pages = [(toc_url, soup)]
+        nxt = [urljoin(toc_url, u) for u in get_string(soup, rt.get("nextTocUrl")).split(chr(10)) if u.strip()]
+        nxt = [u for u in dict.fromkeys(nxt) if u != toc_url]
+        if len(nxt) > 1:  # 和 APP 一样：一次给出多个地址就全部打开
+            pages += [r.fetch(u) for u in nxt]
+        while len(nxt) == 1 and nxt[0] not in {u for u, _ in pages} and len(pages) < 200:
+            pages.append(r.fetch(nxt[0]))
+            nxt = [urljoin(pages[-1][0], u) for u in get_string(pages[-1][1], rt.get("nextTocUrl")).split(chr(10)) if u.strip()][:1]
+        if len(pages) > 1:
+            print(f"     目录共 {len(pages)} 页")
+        chs = [(get_string(a, rt["chapterName"]), urljoin(u, get_string(a, rt["chapterUrl"])))
+               for u, sp in pages for a in get_elements(sp, rt["chapterList"])]
         rep.check(stage, len(chs) > 0, f"共 {len(chs)} 章")
         print(f"     第一章：{chs[0][0]}  {chs[0][1]}")
         print(f"     最后一章：{chs[-1][0]}  {chs[-1][1]}")
