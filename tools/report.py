@@ -61,11 +61,12 @@ def main():
     history = [json.loads(ln) for ln in hist_file.read_text(encoding="utf-8").splitlines() if ln.strip()]
 
     # README 底部
-    L = ["## 书源状态", ""]
-    run = f" · [运行记录]({a.run_url})" if a.run_url else ""
-    count = f"**{passed}/{len(results)} 正常**" + (f"，{len(limited)} 个受限" if limited else "") \
+    # 整块折叠起来，按钮上写一句结论；点开才看到表格。<summary> 里不认 Markdown，所以用 HTML
+    count = f"<b>{passed}/{len(results)} 正常</b>" + (f"，{len(limited)} 个受限" if limited else "") \
             + (f"，{len(failed)} 个有问题" if failed else "")
-    L.append(f"最近一次检测：{now:%Y-%m-%d %H:%M}（UTC-7）· {TRIGGER.get(a.trigger, a.trigger)} · {count}{run}")
+    L = [f"<details><summary><b>书源状态</b>：{count}（{now:%Y-%m-%d %H:%M} UTC-7）</summary>", ""]
+    run = f" · [运行记录]({a.run_url})" if a.run_url else ""
+    L.append(f"最近一次检测：{now:%Y-%m-%d %H:%M}（UTC-7）· {TRIGGER.get(a.trigger, a.trigger)}{run}")
     L += ["", "| 书源 | " + " | ".join(STAGES) + " | 状态 |", "|---" * (len(STAGES) + 2) + "|"]
     for r in results:
         st = status.get(r["url"], {})
@@ -96,6 +97,7 @@ def main():
             L.append(f"| {d} | {h['passed']}/{h['total']} | {'、'.join(h.get('limited', [])) or '—'} "
                      f"| {'、'.join(h['failed']) or '—'} |")
         L += ["", "</details>"]
+    L += ["", "</details>"]
     write_readme(root / "README.md", "\n".join(L))
 
     if a.commit_msg:
