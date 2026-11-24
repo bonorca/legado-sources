@@ -16,7 +16,7 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 
 ## 书源状态
 
-最近一次检测：2026-11-24 00:13（UTC-7）· 推送后检测 · **15/15 正常** · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45345472007)
+最近一次检测：2026-11-24 01:41（UTC-7）· 推送后检测 · **16/17 正常**，1 个受限 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45357225282)
 
 | 书源 | 搜索 | 详情 | 目录 | 正文 | 发现 | 状态 |
 |---|---|---|---|---|---|---|
@@ -35,12 +35,18 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 | 爱下电子书 ixdzs.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 天天看小说 ttks.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 完本小说网 wanbenxs.cc | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
+| 读小说 dxs.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
+| 101看书 101kks.com | ✅ | ✅ | ✅ | ⚠️ | ✅ | 受限 |
+
+**问题**
+
+- ⚠️ 101看书 101kks.com / 正文：要在浏览器里人工验证（「Just a moment」）
 
 <details><summary>最近 30 天</summary>
 
 | 日期 | 正常 | 受限 | 有问题 |
 |---|---|---|---|
-| 2026-11-24 | 15/15 | — | — |
+| 2026-11-24 | 16/17 | 101看书 101kks.com | — |
 | 2026-11-23 | 15/15 | — | — |
 
 </details>
