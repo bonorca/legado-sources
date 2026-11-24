@@ -10,7 +10,8 @@
   {{表达式}}           地址里的 JS，交给 node 计算
   nextContentUrl / replaceRegex   正文分页和正文替换
   nextTocUrl         目录分页：取到一个地址就一页页往下翻，取到多个就全部打开
-  loginCheckJs       只认一种写法：响应里有某段字（拦截页）就用 java.connect 带着 Cookie 再请求一次
+  loginCheckJs       只认两种写法：响应里有某段字（拦截页）就用 java.connect 带着 Cookie 再请求一次，
+                     或者用 java.startBrowserAwait 弹出浏览器让人验证（检测时记为受限）
 选择器里的 :eq(n) 按 Jsoup 的意思处理（从 0 开始），:contains() 也能用。
 
 结果分三种：✅ 通过；❌ 规则有问题（页面正常打开了，但规则取不到东西）；
@@ -238,8 +239,11 @@ class Runner:
         chk = self.src.get("loginCheckJs")
         if chk:
             m = re.search(r'indexOf\("([^"]+)"\)\s*>\s*-1', chk)
-            if not (m and "java.connect(" in chk):
+            if not (m and ("java.connect(" in chk or "java.startBrowserAwait(" in chk)):
                 raise NotImplementedError("测试脚本不支持这段 loginCheckJs: " + chk)
+            if m.group(1) in r.text and "java.startBrowserAwait(" in chk:
+                # APP 里会弹出浏览器让人点验证；检测时没人点，记为受限
+                raise Blocked(f"要在浏览器里人工验证（「{m.group(1)}」）")
             if m.group(1) in r.text:
                 print("     （碰到拦截页，和 loginCheckJs 一样带着 Cookie 再请求一次）")
                 time.sleep(0.6)

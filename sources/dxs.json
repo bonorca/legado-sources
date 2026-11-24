@@ -1,0 +1,57 @@
+[
+  {
+    "bookSourceUrl": "https://m.dxs.tw",
+    "bookSourceName": "读小说 dxs.tw",
+    "bookSourceGroup": "自用",
+    "bookSourceType": 0,
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。和微风小说 wfxs.tw 是同一个书库，但搜索能用。手机版目录每页只有 30 章，目录改从电脑版 www.dxs.tw/du/书号/ 一次取全。正文在 twp.zhys.tw 上，有 Cloudflare 验证：第一次（以及验证过期后）会弹出浏览器，点一下验证、看到正文后返回即可；正文用内置浏览器加载，所以会比别的源慢一点。网站分类的翻页是坏的（第几页都显示第 1 页），所以发现里每类只有 20 本。",
+    "enabled": true,
+    "enabledExplore": true,
+    "enabledCookieJar": true,
+    "concurrentRate": "2/1000",
+    "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
+    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"Just a moment\") > -1) {\n  r = java.startBrowserAwait(String(r.url()), \"点一下验证，看到正文后返回\");\n}\nr",
+    "searchUrl": "/serch.html?siteid=m.dxs.tw&q={{key}}&page={{page}}",
+    "exploreUrl": "玄幻奇幻::/lb-1/?page={{page}}\n武侠仙侠::/lb-2/?page={{page}}\n都市言情::/lb-3/?page={{page}}\n历史军事::/lb-4/?page={{page}}\n科幻灵异::/lb-5/?page={{page}}\n网游竞技::/lb-6/?page={{page}}\n女频频道::/lb-7/?page={{page}}\n其他类别::/lb-8/?page={{page}}",
+    "ruleSearch": {
+      "bookList": "@css:.result-item",
+      "name": "@css:h3 a@text@js:java.t2s(result)",
+      "author": "@css:.info p:eq(0)@text##\\s*\\|.*$@js:java.t2s(result)",
+      "intro": "@css:.line-clamp-2@text@js:java.t2s(result)",
+      "lastChapter": "@css:.text-teal-700 a@text@js:java.t2s(result)",
+      "coverUrl": "@css:img@src",
+      "bookUrl": "@css:h3 a@href"
+    },
+    "ruleExplore": {
+      "bookList": "@css:.sort-view-book",
+      "name": "@css:h4 a@text@js:java.t2s(result)",
+      "author": "@css:.author@ownText@js:java.t2s(result)",
+      "kind": "@css:.tag .blue@text@js:java.t2s(result)",
+      "intro": "@css:.intro@ownText@js:java.t2s(result)",
+      "coverUrl": "@css:.book-img img@src",
+      "bookUrl": "@css:h4 a@href"
+    },
+    "ruleBookInfo": {
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
+      "author": "@css:[property=\"og:novel:author\"]@content@js:java.t2s(result)",
+      "kind": "@css:[property=\"og:novel:category\"]@content@js:java.t2s(result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
+      "intro": "@css:[property=\"og:description\"]@content@js:java.t2s(result)",
+      "coverUrl": "@css:[property=\"og:image\"]@content",
+      "tocUrl": "@css:[property=\"og:novel:read_url\"]@content##^https?://[^/]+/du/(\\d+).*$##https://www.dxs.tw/du/$1/",
+      "canReName": "1"
+    },
+    "ruleToc": {
+      "chapterList": "@css:.book-chapter-list h3:not(:contains(最新章節)) + ul a",
+      "chapterName": "text@js:java.t2s(result)",
+      "chapterUrl": "href@js:result+',{\"webView\":true}'"
+    },
+    "ruleContent": {
+      "content": "@css:#article-content@html@js:java.t2s(result)",
+      "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
+    },
+    "weight": 0,
+    "customOrder": 15,
+    "lastUpdateTime": 1795508512660
+  }
+]
