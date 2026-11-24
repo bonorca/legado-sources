@@ -75,16 +75,28 @@ jobs:
         env:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          python tools/report.py results.json --maint maint.md --trigger "${{ github.event_name }}" \
-            --run-url "$RUN_URL" --commit-msg msg.txt
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          touch msg.txt && cp msg.txt maint_msg.txt
           all_changed=$(git status --porcelain all.json)
-          git add -A README.md reports sources all.json tools/keywords.json
-          git add -A status.json 2>/dev/null || true
-          git commit -m "$(cat msg.txt)"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          # 检测期间 main 上可能又多了提交（别的检测、手动推送）。不合并 README，
+          # 而是每次都切到最新的 main、把自动维护的改动放回去，再重新生成 README 和记录
+          for try in 1 2 3; do
+            git stash push -u -q -- sources all.json status.json tools/keywords.json || true
+            git fetch -q origin main
+            git reset -q --hard origin/main
+            git stash pop -q 2>/dev/null || true
+            cp maint_msg.txt msg.txt
+            python tools/report.py results.json --maint maint.md --trigger "${{ github.event_name }}" \
+              --run-url "$RUN_URL" --commit-msg msg.txt
+            git add -A README.md reports sources all.json tools/keywords.json
+            git add -A status.json 2>/dev/null || true
+            git commit -q -m "$(cat msg.txt)"
+            if git push -q origin HEAD:main; then break; fi
+            [ "$try" = 3 ] && exit 1
+            git reset -q --soft HEAD~1 && git restore -q --staged . && git checkout -q -- README.md reports
+            sleep 5
+          done
           # all.json 有变化时，让备用地址（jsDelivr）马上拿到新版本
           if [ -n "$all_changed" ]; then
             curl -s -o /dev/null "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/all.json" || true
