@@ -14,9 +14,9 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 
 <!-- 书源状态 开始（下面的内容由检测自动生成，改了会被覆盖） -->
 
-## 书源状态
+<details><summary><b>书源状态</b>：<b>15/17 正常</b>，2 个受限（2026-11-24 01:52 UTC-7）</summary>
 
-最近一次检测：2026-11-24 01:41（UTC-7）· 推送后检测 · **16/17 正常**，1 个受限 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45357225282)
+最近一次检测：2026-11-24 01:52（UTC-7）· 推送后检测 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45358880222)
 
 | 书源 | 搜索 | 详情 | 目录 | 正文 | 发现 | 状态 |
 |---|---|---|---|---|---|---|
@@ -33,21 +33,28 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 | 免费小说阅读网 mianfeixiaoshuoyueduwang.com | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 台湾小说网 xsw.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 爱下电子书 ixdzs.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
-| 天天看小说 ttks.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
+| 天天看小说 ttks.tw | ⚠️ | ⚠️ | — | — | ⚠️ | 受限 |
 | 完本小说网 wanbenxs.cc | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 读小说 dxs.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
-| 101看书 101kks.com | ✅ | ✅ | ✅ | ⚠️ | ✅ | 受限 |
+| 101看书 101kks.com | ⚠️ | ⚠️ | — | — | ⚠️ | 受限 |
 
 **问题**
 
-- ⚠️ 101看书 101kks.com / 正文：要在浏览器里人工验证（「Just a moment」）
+- ⚠️ 天天看小说 ttks.tw / 搜索：网站拒绝访问（HTTP 403）
+- ⚠️ 天天看小说 ttks.tw / 详情：网站拒绝访问（HTTP 403）
+- ⚠️ 天天看小说 ttks.tw / 发现：网站拒绝访问（HTTP 403）
+- ⚠️ 101看书 101kks.com / 搜索：要在浏览器里人工验证（「Just a moment」）
+- ⚠️ 101看书 101kks.com / 详情：要在浏览器里人工验证（「Just a moment」）
+- ⚠️ 101看书 101kks.com / 发现：要在浏览器里人工验证（「Just a moment」）
 
 <details><summary>最近 30 天</summary>
 
 | 日期 | 正常 | 受限 | 有问题 |
 |---|---|---|---|
-| 2026-11-24 | 16/17 | 101看书 101kks.com | — |
+| 2026-11-24 | 15/17 | 天天看小说 ttks.tw、101看书 101kks.com | — |
 | 2026-11-23 | 15/15 | — | — |
+
+</details>
 
 </details>
 
