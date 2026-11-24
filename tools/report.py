@@ -66,8 +66,7 @@ def main():
     count = f"**{passed}/{len(results)} 正常**" + (f"，{len(limited)} 个受限" if limited else "") \
             + (f"，{len(failed)} 个有问题" if failed else "")
     L.append(f"最近一次检测：{now:%Y-%m-%d %H:%M}（北京时间）· {TRIGGER.get(a.trigger, a.trigger)} · {count}{run}")
-    L += ["", "✅ 正常　⚠️ 受限：网站挡住了检测的请求，规则没坏，不会因此停用　❌ 有问题：规则取不到东西，连续 2 天会被自动停用", ""]
-    L += ["| 书源 | " + " | ".join(STAGES) + " | 状态 |", "|---" * (len(STAGES) + 2) + "|"]
+    L += ["", "| 书源 | " + " | ".join(STAGES) + " | 状态 |", "|---" * (len(STAGES) + 2) + "|"]
     for r in results:
         st = status.get(r["url"], {})
         if not enabled.get(r["url"], True):
