@@ -14,9 +14,9 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 
 <!-- 书源状态 开始（下面的内容由检测自动生成，改了会被覆盖） -->
 
-<details><summary><b>书源状态</b>：<b>17/17 正常</b>（2026-11-24 14:48 UTC-7）</summary>
+<details><summary><b>书源状态</b>：<b>17/17 正常</b>（2026-11-24 16:02 UTC-7）</summary>
 
-最近一次检测：2026-11-24 14:48（UTC-7）· 推送后检测 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45493420451)
+最近一次检测：2026-11-24 16:02（UTC-7）· 每日定时检测 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45505357511)
 
 | 书源 | 搜索 | 详情 | 目录 | 正文 | 发现 | 状态 |
 |---|---|---|---|---|---|---|
