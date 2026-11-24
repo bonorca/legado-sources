@@ -18,8 +18,6 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 
 最近一次检测：2026-11-24 00:05（北京时间）· 推送后检测 · **14/15 正常**，1 个有问题 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45211082177)
 
-✅ 正常　⚠️ 受限：网站挡住了检测的请求，规则没坏，不会因此停用　❌ 有问题：规则取不到东西，连续 2 天会被自动停用
-
 | 书源 | 搜索 | 详情 | 目录 | 正文 | 发现 | 状态 |
 |---|---|---|---|---|---|---|
 | 笔趣阁 biquge.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
