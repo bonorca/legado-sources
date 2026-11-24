@@ -16,7 +16,7 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 
 ## 书源状态
 
-最近一次检测：2026-11-24 13:57（北京时间）· 每日定时检测 · **14/15 正常**，1 个有问题 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45336070542)
+最近一次检测：2026-11-24 14:40（北京时间）· 推送后检测 · **15/15 正常** · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45341429488)
 
 | 书源 | 搜索 | 详情 | 目录 | 正文 | 发现 | 状态 |
 |---|---|---|---|---|---|---|
@@ -25,7 +25,7 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 | 52书库 52shuku.net | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 笔趣阁 biquge78.cc | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 武侠小说网 wuxiayue.com | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
-| 思兔 sto9.com | ✅ | ✅ | ✅ | ✅ | ❌ | 有问题（第 1 天） |
+| 思兔 sto9.com | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 格格党 ggd66.com | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 精品小说 jpxs123.top | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 天涯书库 tianyashuku.net | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
@@ -36,19 +36,11 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 | 天天看小说 ttks.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 完本小说网 wanbenxs.cc | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 
-**问题**
-
-- ❌ 思兔 sto9.com / 发现：言情小说：第1页 15 本，第2页 15 本，例：兽世：今晚吃谁？ / 邂蕾 / 言情小说
-
-**自动维护**
-
-- ⚠️ **思兔 sto9.com**：发现：言情小说：第1页 15 本，第2页 15 本，例：兽世：今晚吃谁？ / 邂蕾 / 言情小说（第 1 次失败，连续 2 次才停用）
-
 <details><summary>最近 30 天</summary>
 
 | 日期 | 正常 | 受限 | 有问题 |
 |---|---|---|---|
-| 2026-11-24 | 14/15 | — | 思兔 sto9.com |
+| 2026-11-24 | 15/15 | — | — |
 | 2026-11-23 | 12/13 | — | 微风小说 wfxs.tw |
 
 </details>
