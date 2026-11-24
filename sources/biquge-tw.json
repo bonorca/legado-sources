@@ -4,7 +4,7 @@
     "bookSourceName": "笔趣阁 biquge.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。搜索结果页是繁体，用 java.t2s 转成简体；详情、目录、正文本来就是简体。请求太快会被 429 限流，所以限速为每秒 2 次。",
+    "bookSourceComment": "自己维护。搜索结果页是繁体，用 java.t2s 转成简体；详情、目录、正文本来就是简体。请求太快会被 429 限流，所以限速为每秒 2 次。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -14,11 +14,11 @@
     "exploreUrl": "玄幻::/sort/xuanhuan/{{page}}.html\n武侠::/sort/wuxia/{{page}}.html\n都市::/sort/dushi/{{page}}.html\n历史::/sort/lishi/{{page}}.html\n科幻::/sort/kehuan/{{page}}.html\n游戏::/sort/youxi/{{page}}.html\n女生::/sort/nvsheng/{{page}}.html\n其他::/sort/qita/{{page}}.html",
     "ruleSearch": {
       "bookList": "@css:.result-card",
-      "name": "@css:.book-title@text@js:java.t2s(result)",
-      "author": "@css:.author@text@js:java.t2s(result)",
-      "kind": "@css:.badge@text@js:java.t2s(result)",
-      "intro": "@css:.book-intro@text@js:java.t2s(result)",
-      "lastChapter": "@css:.latest a@text@js:java.t2s(result)",
+      "name": "@css:.book-title@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.author@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.badge@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.book-intro@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.latest a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.book-cover img@src",
       "bookUrl": "@css:.book-title@href"
     },
@@ -53,6 +53,6 @@
     },
     "weight": 0,
     "customOrder": 0,
-    "lastUpdateTime": 1795242689661
+    "lastUpdateTime": 1795551680253
   }
 ]

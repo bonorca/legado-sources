@@ -4,7 +4,7 @@
   @css:选择器@属性   属性可以是 text / html / ownText / 任意 HTML 属性
   text / href / src  直接取当前元素
   ##正则##替换       对结果做替换
-  @js:java.t2s(result)  繁体转简体（用 opencc 模拟）
+  @js:java.t2s(result)  繁体转简体（用 opencc 模拟）；也认 (typeof java.t2s=="function"?java.t2s(result):result)
   @js:'前缀'+result     在结果前面拼一段（比如换域名）
   地址,{"method":"POST","body":"..."}   POST 请求
   {{表达式}}           地址里的 JS，交给 node 计算
@@ -95,7 +95,8 @@ def apply_post(value, regex, js):
         rep = re.sub(r"\$(\d)", r"\\\1", rep)  # 阅读用 Java 的 $1 引用分组，Python 写成 \1
         value = re.sub(pat, rep, value)
     if js:
-        js = js.strip()
+        # 有的 APP（iOS 上的）没有 java.t2s，书源里写成「有就转、没有就原样」；测试按有 java.t2s 的阅读 APP 来
+        js = js.strip().replace('(typeof java.t2s=="function"?java.t2s(result):result)', "java.t2s(result)")
         wrap = re.fullmatch(r"(?:'([^']*)'\s*\+\s*)?result(?:\s*\+\s*'([^']*)')?", js)
         chain = re.fullmatch(r"(java\.t2s\(result\)|result)((?:\.replace\(/(?:[^/\\]|\\.)+/g,\s*\"[^\"]*\"\))*)", js)
         if chain:

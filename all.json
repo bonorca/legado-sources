@@ -4,7 +4,7 @@
     "bookSourceName": "笔趣阁 biquge.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。搜索结果页是繁体，用 java.t2s 转成简体；详情、目录、正文本来就是简体。请求太快会被 429 限流，所以限速为每秒 2 次。",
+    "bookSourceComment": "自己维护。搜索结果页是繁体，用 java.t2s 转成简体；详情、目录、正文本来就是简体。请求太快会被 429 限流，所以限速为每秒 2 次。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -14,11 +14,11 @@
     "exploreUrl": "玄幻::/sort/xuanhuan/{{page}}.html\n武侠::/sort/wuxia/{{page}}.html\n都市::/sort/dushi/{{page}}.html\n历史::/sort/lishi/{{page}}.html\n科幻::/sort/kehuan/{{page}}.html\n游戏::/sort/youxi/{{page}}.html\n女生::/sort/nvsheng/{{page}}.html\n其他::/sort/qita/{{page}}.html",
     "ruleSearch": {
       "bookList": "@css:.result-card",
-      "name": "@css:.book-title@text@js:java.t2s(result)",
-      "author": "@css:.author@text@js:java.t2s(result)",
-      "kind": "@css:.badge@text@js:java.t2s(result)",
-      "intro": "@css:.book-intro@text@js:java.t2s(result)",
-      "lastChapter": "@css:.latest a@text@js:java.t2s(result)",
+      "name": "@css:.book-title@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.author@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.badge@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.book-intro@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.latest a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.book-cover img@src",
       "bookUrl": "@css:.book-title@href"
     },
@@ -53,14 +53,14 @@
     },
     "weight": 0,
     "customOrder": 0,
-    "lastUpdateTime": 1795242689661
+    "lastUpdateTime": 1795551680253
   },
   {
     "bookSourceUrl": "https://m.wfxs.tw",
     "bookSourceName": "微风小说 wfxs.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字都用 java.t2s 转成简体。手机版目录每页只有 30 章，所以目录改从电脑版 www.wfxs.tw 一次取全。和 biquge.tw 是同一个后台，章节内容一样，可以互为备用。请求太快会被限流，限速为每秒 2 次。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字都用 java.t2s 转成简体。手机版目录每页只有 30 章，所以目录改从电脑版 www.wfxs.tw 一次取全。和 biquge.tw 是同一个后台，章节内容一样，可以互为备用。请求太快会被限流，限速为每秒 2 次。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -70,44 +70,44 @@
     "exploreUrl": "仙侠玄幻::/xianxiaxuanhuan/{{page}}/\n穿越架空::/chuanyuejiakong/{{page}}/\n都市异能::/dushiyineng/{{page}}/\n都市言情::/dushiyanqing/{{page}}/\n总裁豪门::/haomenzongcai/{{page}}/\n悬疑灵异::/xuanyilingyi/{{page}}/\n浪漫青春::/langmanqingchun/{{page}}/\n现代言情::/xianyan/{{page}}/\n古代言情::/guyan/{{page}}/\n其他类型::/qita/{{page}}/",
     "ruleSearch": {
       "bookList": "@css:.result-card",
-      "name": "@css:.book-title@text@js:java.t2s(result)",
-      "author": "@css:.author@text@js:java.t2s(result)",
-      "kind": "@css:.badge@text@js:java.t2s(result)",
-      "intro": "@css:.book-intro@text@js:java.t2s(result)",
-      "lastChapter": "@css:.latest a@text@js:java.t2s(result)",
+      "name": "@css:.book-title@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.author@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.badge@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.book-intro@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.latest a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.book-cover img@src",
       "bookUrl": "@css:.book-title@href"
     },
     "ruleExplore": {
       "bookList": "@css:#html_box .item",
-      "name": "@css:.body .t@text@js:java.t2s(result)",
-      "author": "@css:.body .author@text@js:java.t2s(result)",
-      "kind": "@css:.body span:eq(2)@text@js:java.t2s(result)",
-      "intro": "@css:.body p@text@js:java.t2s(result)",
+      "name": "@css:.body .t@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.body .author@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.body span:eq(2)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.body p@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "bookUrl": "@css:a@href"
     },
     "ruleBookInfo": {
-      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
-      "author": "@css:[property=\"og:novel:author\"]@content@js:java.t2s(result)",
-      "kind": "@css:[property=\"og:novel:status\"]@content@js:java.t2s(result)",
-      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
-      "intro": "@css:.book-details .bh_book_title_hide@text##^簡介:\\s*@js:java.t2s(result)",
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:[property=\"og:novel:author\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:[property=\"og:novel:status\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.book-details .bh_book_title_hide@text##^簡介:\\s*@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:[property=\"og:image\"]@content",
       "tocUrl": "@css:.book-details a[href^=\"/booklist/\"]@href@js:'https://www.wfxs.tw'+result",
       "canReName": "1"
     },
     "ruleToc": {
       "chapterList": "@css:#readerlists ul li a",
-      "chapterName": "text@js:java.t2s(result)",
+      "chapterName": "text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "chapterUrl": "href@js:'https://m.wfxs.tw'+result"
     },
     "ruleContent": {
-      "content": "@css:#read_conent_box@html@js:java.t2s(result)",
+      "content": "@css:#read_conent_box@html@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 1,
-    "lastUpdateTime": 1795243284402
+    "lastUpdateTime": 1795551680253
   },
   {
     "bookSourceUrl": "https://www.52shuku.net",
@@ -163,7 +163,7 @@
     "bookSourceName": "笔趣阁 biquge78.cc",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。正文是从繁体机器转过来的（什麽、藉此这类字），用 java.t2s 统一成简体，并把「丶」换回顿号。一章常分成两页，靠 nextContentUrl 自动接上。正文里插的「新⑥⑨书吧」「??书吧」「↑返回顶部↑」已去掉。搜索一次返回全部结果，没有翻页。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。",
+    "bookSourceComment": "自己维护。正文是从繁体机器转过来的（什麽、藉此这类字），用 java.t2s 统一成简体，并把「丶」换回顿号。一章常分成两页，靠 nextContentUrl 自动接上。正文里插的「新⑥⑨书吧」「??书吧」「↑返回顶部↑」已去掉。搜索一次返回全部结果，没有翻页。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -204,13 +204,13 @@
       "chapterUrl": "href"
     },
     "ruleContent": {
-      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:java.t2s(result).replace(/丶/g,\"、\")",
+      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:(typeof java.t2s==\"function\"?java.t2s(result):result).replace(/丶/g,\"、\")",
       "nextContentUrl": "@css:a#linkNext:contains(下一页)@href",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 3,
-    "lastUpdateTime": 1795248433509
+    "lastUpdateTime": 1795551680253
   },
   {
     "bookSourceUrl": "https://www.wuxiayue.com",
@@ -266,7 +266,7 @@
     "bookSourceName": "思兔 sto9.com",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体。书页只列 36 章，目录改从 /ajax_novels/chapterlist/书号.html 一次取全。正文里夹着被 emoji、各种花体字母（𝘀𝘁𝗼、𝖘𝖙𝖔 等）拆开的「sto9.com」广告行，以及「（還有更新耶）」，都已去掉；正文开头重复的章节标题也去掉了。只有一个结果时搜索会直接跳到书页，靠 bookUrlPattern 识别。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体。书页只列 36 章，目录改从 /ajax_novels/chapterlist/书号.html 一次取全。正文里夹着被 emoji、各种花体字母（𝘀𝘁𝗼、𝖘𝖙𝖔 等）拆开的「sto9.com」广告行，以及「（還有更新耶）」，都已去掉；正文开头重复的章节标题也去掉了。只有一个结果时搜索会直接跳到书页，靠 bookUrlPattern 识别。繁转简不会把「看著」这类的「著」改成「着」，用 replaceRegex 补上（著作、著名等词保留）。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -276,43 +276,43 @@
     "exploreUrl": "玄幻奇幻::/novels/class/1_{{page}}.html\n武侠仙侠::/novels/class/2_{{page}}.html\n现代都市::/novels/class/3_{{page}}.html\n历史军事::/novels/class/4_{{page}}.html\n科幻小说::/novels/class/5_{{page}}.html\n游戏竞技::/novels/class/6_{{page}}.html\n恐怖灵异::/novels/class/7_{{page}}.html\n言情小说::/novels/class/8_{{page}}.html\n动漫同人::/novels/class/9_{{page}}.html\n其他类型::/novels/class/10_{{page}}.html",
     "ruleSearch": {
       "bookList": "@css:#article_list_content li",
-      "name": "@css:.newnav h3 a@text@js:java.t2s(result)",
-      "author": "@css:.labelbox label:eq(0)@text@js:java.t2s(result)",
-      "kind": "@css:.labelbox label:eq(1)@text@js:java.t2s(result)",
-      "intro": "@css:.ellipsis_2@text@js:java.t2s(result)",
-      "lastChapter": "@css:.zxzj a@text@js:java.t2s(result)",
+      "name": "@css:.newnav h3 a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.labelbox label:eq(0)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.labelbox label:eq(1)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.ellipsis_2@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.zxzj a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:img@data-src",
       "bookUrl": "@css:.newnav h3 a@href"
     },
     "ruleBookInfo": {
-      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
-      "author": "@css:[property=\"og:novel:author\"]@content@js:java.t2s(result)",
-      "kind": "@css:[property=\"og:novel:category\"]@content@js:java.t2s(result)",
-      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
-      "intro": "@css:.navtxt@text##\\s*小說關鍵詞[\\s\\S]*$@js:java.t2s(result)",
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:[property=\"og:novel:author\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:[property=\"og:novel:category\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.navtxt@text##\\s*小說關鍵詞[\\s\\S]*$@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:[property=\"og:image\"]@content",
       "tocUrl": "@css:[property=\"og:book_id\"]@content@js:'/ajax_novels/chapterlist/'+result+'.html'",
       "canReName": "1"
     },
     "ruleToc": {
       "chapterList": "@css:li a",
-      "chapterName": "text@js:java.t2s(result)",
+      "chapterName": "text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "chapterUrl": "href"
     },
     "ruleContent": {
-      "content": "@css:.txtnav@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$|^[^\n]{0,40}[.．][^\n]{0,4}[cｃ𝐀-𝟿][^\n]{0,4}[oｏ𝐀-𝟿][^\n]{0,4}[mｍ𝐀-𝟿][^\n]{0,40}$|^[\\s 　]*（還有更新耶）[\\s 　]*$@js:java.t2s(result)",
+      "content": "@css:.txtnav@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$|^[^\n]{0,40}[.．][^\n]{0,4}[cｃ𝐀-𝟿][^\n]{0,4}[oｏ𝐀-𝟿][^\n]{0,4}[mｍ𝐀-𝟿][^\n]{0,40}$|^[\\s 　]*（還有更新耶）[\\s 　]*$@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 5,
-    "lastUpdateTime": 1795369196236,
+    "lastUpdateTime": 1795551680253,
     "ruleExplore": {
       "bookList": "@css:#article_list_content li",
-      "name": "@css:.newnav h3 a@text@js:java.t2s(result)",
-      "author": "@css:.labelbox label:eq(0)@text@js:java.t2s(result)",
-      "kind": "@css:.labelbox label:eq(1)@text@js:java.t2s(result)",
-      "intro": "@css:.ellipsis_2@text@js:java.t2s(result)",
-      "lastChapter": "@css:.zxzj a@text@js:java.t2s(result)",
+      "name": "@css:.newnav h3 a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.labelbox label:eq(0)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.labelbox label:eq(1)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.ellipsis_2@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.zxzj a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:img@data-src",
       "bookUrl": "@css:.newnav h3 a@href"
     },
@@ -323,7 +323,7 @@
     "bookSourceName": "格格党 ggd66.com",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。和笔趣阁 biquge78.cc 是同一套网站程序，规则照搬。新近章节夹着繁体（像是从繁体站转来的），所以正文统一用 java.t2s 转简体，「丶」换回顿号，漏转的「著」改成「着」。一章常分成两页，靠 nextContentUrl 自动接上。正文里的「↑返回顶部↑」和「新⑥⑨书吧」类广告已去掉。搜索一次返回全部结果，没有翻页。",
+    "bookSourceComment": "自己维护。和笔趣阁 biquge78.cc 是同一套网站程序，规则照搬。新近章节夹着繁体（像是从繁体站转来的），所以正文统一用 java.t2s 转简体，「丶」换回顿号，漏转的「著」改成「着」。一章常分成两页，靠 nextContentUrl 自动接上。正文里的「↑返回顶部↑」和「新⑥⑨书吧」类广告已去掉。搜索一次返回全部结果，没有翻页。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -364,13 +364,13 @@
       "chapterUrl": "href"
     },
     "ruleContent": {
-      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:java.t2s(result).replace(/丶/g,\"、\")",
+      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:(typeof java.t2s==\"function\"?java.t2s(result):result).replace(/丶/g,\"、\")",
       "nextContentUrl": "@css:a#linkNext:contains(下一页)@href",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 6,
-    "lastUpdateTime": 1795251575255
+    "lastUpdateTime": 1795551680253
   },
   {
     "bookSourceUrl": "https://jpxs123.top",
@@ -570,7 +570,7 @@
     "bookSourceName": "台湾小说网 xsw.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。手机版目录每页只有 20 章，所以目录改从电脑版 www.xsw.tw/book/书号/ 一次取全（电脑版是 Big5 编码），章节地址再换回手机版。正文开头重复的章节标题，以及末尾「喜欢……请大家收藏」的广告行已去掉。网站 HTTPS 证书链不完整，阅读 APP 不校验证书，不影响使用。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。手机版目录每页只有 20 章，所以目录改从电脑版 www.xsw.tw/book/书号/ 一次取全（电脑版是 Big5 编码），章节地址再换回手机版。正文开头重复的章节标题，以及末尾「喜欢……请大家收藏」的广告行已去掉。网站 HTTPS 证书链不完整，阅读 APP 不校验证书，不影响使用。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -580,51 +580,51 @@
     "exploreUrl": "玄幻魔法::/fenlei1_{{page}}.html\n武侠修真::/fenlei2_{{page}}.html\n都市言情::/fenlei3_{{page}}.html\n历史军事::/fenlei4_{{page}}.html\n网游动漫::/fenlei5_{{page}}.html\n科幻小说::/fenlei6_{{page}}.html\n恐怖灵异::/fenlei7_{{page}}.html\n其他类型::/fenlei8_{{page}}.html",
     "ruleSearch": {
       "bookList": "@css:.bookbox",
-      "name": "@css:.bookname a@text@js:java.t2s(result)",
-      "author": "@css:.author@text##^作者：@js:java.t2s(result)",
-      "lastChapter": "@css:.update a@text@js:java.t2s(result)",
-      "intro": "@css:.intro_line@text##^簡介：\\s*@js:java.t2s(result)",
+      "name": "@css:.bookname a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.author@text##^作者：@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.update a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.intro_line@text##^簡介：\\s*@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.bookimg img@src",
       "bookUrl": "@css:.bookname a@href"
     },
     "ruleExplore": {
       "bookList": "@css:.bookbox",
-      "name": "@css:.bookname a@text@js:java.t2s(result)",
-      "author": "@css:.author@text##^作者：@js:java.t2s(result)",
-      "lastChapter": "@css:.update a@text@js:java.t2s(result)",
-      "intro": "@css:.intro_line@text##^簡介：\\s*@js:java.t2s(result)",
+      "name": "@css:.bookname a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.author@text##^作者：@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.update a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.intro_line@text##^簡介：\\s*@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.bookimg img@src",
       "bookUrl": "@css:.bookname a@href"
     },
     "ruleBookInfo": {
-      "name": "@css:.block_txt2 h2@text@js:java.t2s(result)",
-      "author": "@css:.block_txt2 a[href^=\"/author/\"]@text@js:java.t2s(result)",
-      "kind": "@css:.block_txt2 a[href^=\"/fenlei\"]@text@js:java.t2s(result)",
-      "lastChapter": "@css:.block_txt2 p:last-child a@text@js:java.t2s(result)",
-      "intro": "@css:.intro_info@text@js:java.t2s(result)",
+      "name": "@css:.block_txt2 h2@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.block_txt2 a[href^=\"/author/\"]@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.block_txt2 a[href^=\"/fenlei\"]@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.block_txt2 p:last-child a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.intro_info@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.block_img2 img@src",
       "tocUrl": "@css:.ablum_read a[href$=\"page-1.html\"]@href##^/(\\d+)/page-1\\.html$##https://www.xsw.tw/book/$1/",
       "canReName": "1"
     },
     "ruleToc": {
       "chapterList": "@css:.liebiao li a",
-      "chapterName": "text@js:java.t2s(result)",
+      "chapterName": "text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "chapterUrl": "href##^/book/##https://m.xsw.tw/"
     },
     "ruleContent": {
-      "content": "@css:#nr1@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$|^喜[欢歡][^\n]{0,60}[请請]大家收[藏][^\n]*$@js:java.t2s(result)",
+      "content": "@css:#nr1@textNodes##(?m)\\A[\\s 　]*第[^\n]{0,30}[章節回][^\n]{0,30}$|^喜[欢歡][^\n]{0,60}[请請]大家收[藏][^\n]*$@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 11,
-    "lastUpdateTime": 1795440142084
+    "lastUpdateTime": 1795551680253
   },
   {
     "bookSourceUrl": "https://ixdzs.tw",
     "bookSourceName": "爱下电子书 ixdzs.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。网站会拦带浏览器标识（Mozilla…）的非浏览器请求，所以请求头用阅读自己的网络库标识 okhttp/4.12.0。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」改成「着」。书页只列前 80 章，目录改用网站自己的接口 POST /novel/html 一次取全。",
+    "bookSourceComment": "自己维护。网站会拦带浏览器标识（Mozilla…）的非浏览器请求，所以请求头用阅读自己的网络库标识 okhttp/4.12.0。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」改成「着」。书页只列前 80 章，目录改用网站自己的接口 POST /novel/html 一次取全。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -634,55 +634,55 @@
     "exploreUrl": "玄幻奇幻::/sort/1/index-0-0-0-{{page}}.html\n修真仙侠::/sort/2/index-0-0-0-{{page}}.html\n都市生活::/sort/3/index-0-0-0-{{page}}.html\n历史军事::/sort/4/index-0-0-0-{{page}}.html\n游戏::/sort/5/index-0-0-0-{{page}}.html\n科幻::/sort/6/index-0-0-0-{{page}}.html\n现代言情::/sort/7/index-0-0-0-{{page}}.html\n耽美::/sort/8/index-0-0-0-{{page}}.html\n古代言情::/sort/9/index-0-0-0-{{page}}.html\n武侠::/sort/10/index-0-0-0-{{page}}.html\n悬疑灵异::/sort/12/index-0-0-0-{{page}}.html\n二次元同人::/sort/18/index-0-0-0-{{page}}.html",
     "ruleSearch": {
       "bookList": "@css:ul.u-list li",
-      "name": "@css:h3.bname a@text@js:java.t2s(result)",
-      "author": "@css:.bauthor a@text@js:java.t2s(result)",
-      "kind": "@css:.lz@text@js:java.t2s(result)",
-      "wordCount": "@css:.size@text@js:java.t2s(result)",
-      "intro": "@css:.l-p2@text@js:java.t2s(result)",
-      "lastChapter": "@css:.l-chapter@text@js:java.t2s(result)",
+      "name": "@css:h3.bname a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.bauthor a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.lz@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "wordCount": "@css:.size@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.l-p2@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.l-chapter@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.l-img img@src",
       "bookUrl": "@css:h3.bname a@href"
     },
     "ruleExplore": {
       "bookList": "@css:ul.u-list li",
-      "name": "@css:h3.bname a@text@js:java.t2s(result)",
-      "author": "@css:.bauthor a@text@js:java.t2s(result)",
-      "kind": "@css:.lz@text@js:java.t2s(result)",
-      "wordCount": "@css:.size@text@js:java.t2s(result)",
-      "intro": "@css:.l-p2@text@js:java.t2s(result)",
-      "lastChapter": "@css:.l-chapter@text@js:java.t2s(result)",
+      "name": "@css:h3.bname a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.bauthor a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.lz@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "wordCount": "@css:.size@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.l-p2@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.l-chapter@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.l-img img@src",
       "bookUrl": "@css:h3.bname a@href"
     },
     "ruleBookInfo": {
-      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
-      "author": "@css:[property=\"og:novel:author\"]@content@js:java.t2s(result)",
-      "kind": "@css:[property=\"og:novel:category\"]@content@js:java.t2s(result)",
-      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
-      "intro": "@css:p#intro@ownText@js:java.t2s(result)",
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:[property=\"og:novel:author\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:[property=\"og:novel:category\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:p#intro@ownText@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:[property=\"og:image\"]@content",
       "tocUrl": "@css:[property=\"og:novel:read_url\"]@content##^.*/read/(\\d+)/.*$##/novel/html,{\"method\":\"POST\",\"body\":\"bid=$1\"}",
       "canReName": "1"
     },
     "ruleToc": {
       "chapterList": "@css:li a",
-      "chapterName": "text@js:java.t2s(result)",
+      "chapterName": "text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "chapterUrl": "href"
     },
     "ruleContent": {
-      "content": "@css:article.page-content section@html@js:java.t2s(result)",
+      "content": "@css:article.page-content section@html@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 12,
-    "lastUpdateTime": 1795434204793
+    "lastUpdateTime": 1795551680253
   },
   {
     "bookSourceUrl": "https://ttks.tw",
     "bookSourceName": "天天看小说 ttks.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。搜索只有一个结果时网站直接跳到书页，靠 bookUrlPattern 认出来。书页上的作者一律写「佚名」，所以作者只取搜索和发现列表里的。全部章节就在书页上。搜索结果只有一页。正文里「天天看小说 ttk.tw」的广告行、部分书里夹在句中由 emoji 和花体字母拼成的「69shux.com」广告、残留的成对 emoji、只有「>」「→」的空行、开头重复的章节标题都已去掉。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。搜索只有一个结果时网站直接跳到书页，靠 bookUrlPattern 认出来。书页上的作者一律写「佚名」，所以作者只取搜索和发现列表里的。全部章节就在书页上。搜索结果只有一页。正文里「天天看小说 ttk.tw」的广告行、部分书里夹在句中由 emoji 和花体字母拼成的「69shux.com」广告、残留的成对 emoji、只有「>」「→」的空行、开头重复的章节标题都已去掉。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -693,39 +693,39 @@
     "exploreUrl": "玄幻::/novel/class/xuanhuan/{{page}}.html\n仙侠::/novel/class/wuxia/{{page}}.html\n都市::/novel/class/dushi/{{page}}.html\n军事::/novel/class/lishi/{{page}}.html\n游戏::/novel/class/youxi/{{page}}.html\n科幻::/novel/class/kehuan/{{page}}.html\n悬疑::/novel/class/kongbu/{{page}}.html\n现言::/novel/class/tongren/{{page}}.html\n言情::/novel/class/yaniqng/{{page}}.html\n其它::/novel/class/qita/{{page}}.html",
     "ruleSearch": {
       "bookList": "@css:.novel_cell",
-      "name": "@css:h3@text@js:java.t2s(result)",
-      "author": "@css:li:contains(作者)@text##^作者：@js:java.t2s(result)",
-      "intro": "@css:li:contains(簡介)@text##^簡介：\\s*@js:java.t2s(result)",
+      "name": "@css:h3@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:li:contains(作者)@text##^作者：@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:li:contains(簡介)@text##^簡介：\\s*@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:amp-img@src",
       "bookUrl": "@css:li a@href"
     },
     "ruleExplore": {
       "bookList": "@css:.novel_cell",
-      "name": "@css:h3@text@js:java.t2s(result)",
-      "author": "@css:li:contains(作者)@text##^作者：@js:java.t2s(result)",
-      "intro": "@css:li:contains(簡介)@text##^簡介：\\s*@js:java.t2s(result)",
+      "name": "@css:h3@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:li:contains(作者)@text##^作者：@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:li:contains(簡介)@text##^簡介：\\s*@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:amp-img@src",
       "bookUrl": "@css:li a@href"
     },
     "ruleBookInfo": {
-      "name": "@css:.novel_info h1@text@js:java.t2s(result)",
-      "kind": "@css:.novel_info li:contains(類別)@ownText@js:java.t2s(result)",
-      "intro": "@css:.description p@text@js:java.t2s(result)",
+      "name": "@css:.novel_info h1@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.novel_info li:contains(類別)@ownText@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.description p@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.novel_info amp-img[src*=\"/files/article/image/\"]@src##\\?.*$",
       "canReName": "1"
     },
     "ruleToc": {
       "chapterList": "@css:h3.chapters_title:contains(全部章節) + .chapters_frame .chapter_cell a",
-      "chapterName": "text@js:java.t2s(result)",
+      "chapterName": "text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "chapterUrl": "href"
     },
     "ruleContent": {
-      "content": "@css:.title h1, .content p@textNodes##(?m)^[^\\n]*天天看小[說说][^\\n]*$|\\A[\\s　]*第[^\\n]{0,15}?[章節回][ \\t　]*([^\\n]*)\\n(?:[\\s　]*第[^\\n]{0,15}?[章節回][ \\t　]*\\1[^\\n]{0,40}\\n|[\\s　]*\\1[ \\t　]*\\n)?|(?<![^一-鿿、-〿！（），：；？“”‘’…—\\n])(?=[^一-鿿、-〿！（），：；？“”‘’…—\\n]{0,60}[^\\x00-\\x7f　  一-鿿、-〿！（），：；？“”‘’…—\\n])(?=[^一-鿿、-〿！（），：；？“”‘’…—\\n]{0,60}?(?:[A-Za-z0-9]|[^\\x00-\\x7f　  一-鿿、-〿！（），：；？“”‘’…—\\n])[.．](?:[A-Za-z0-9]|[^\\x00-\\x7f　  一-鿿、-〿！（），：；？“”‘’…—\\n]))[^一-鿿、-〿！（），：；？“”‘’…—\\n]{1,60}(?![^一-鿿、-〿！（），：；？“”‘’…—\\n])|[☀-➿🀀-🫿]️?[☀-➿🀀-🫿]️?[ 　  ]+[☀-➿🀀-🫿]️?[☀-➿🀀-🫿]️?|^[\\s　]*[<>→]+[\\s　]*$@js:java.t2s(result)",
+      "content": "@css:.title h1, .content p@textNodes##(?m)^[^\\n]*天天看小[說说][^\\n]*$|\\A[\\s　]*第[^\\n]{0,15}?[章節回][ \\t　]*([^\\n]*)\\n(?:[\\s　]*第[^\\n]{0,15}?[章節回][ \\t　]*\\1[^\\n]{0,40}\\n|[\\s　]*\\1[ \\t　]*\\n)?|(?<![^一-鿿、-〿！（），：；？“”‘’…—\\n])(?=[^一-鿿、-〿！（），：；？“”‘’…—\\n]{0,60}[^\\x00-\\x7f　  一-鿿、-〿！（），：；？“”‘’…—\\n])(?=[^一-鿿、-〿！（），：；？“”‘’…—\\n]{0,60}?(?:[A-Za-z0-9]|[^\\x00-\\x7f　  一-鿿、-〿！（），：；？“”‘’…—\\n])[.．](?:[A-Za-z0-9]|[^\\x00-\\x7f　  一-鿿、-〿！（），：；？“”‘’…—\\n]))[^一-鿿、-〿！（），：；？“”‘’…—\\n]{1,60}(?![^一-鿿、-〿！（），：；？“”‘’…—\\n])|[☀-➿🀀-🫿]️?[☀-➿🀀-🫿]️?[ 　  ]+[☀-➿🀀-🫿]️?[☀-➿🀀-🫿]️?|^[\\s　]*[<>→]+[\\s　]*$@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 13,
-    "lastUpdateTime": 1795442796054
+    "lastUpdateTime": 1795551680253
   },
   {
     "bookSourceUrl": "https://www.wanbenxs.cc",
@@ -738,7 +738,7 @@
     "enabledCookieJar": true,
     "concurrentRate": "2/1000",
     "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
-    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"<title></title><div></div>\") > -1) {\n  r = java.connect(String(r.url()));\n}\nr",
+    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"<title></title><div></div>\") > -1 && typeof java.connect == \"function\") {\n  r = java.connect(String(r.url()));\n}\nr",
     "searchUrl": "/search/?searchkey={{key}}",
     "exploreUrl": "玄幻::/sort/1/{{page}}/\n武侠::/sort/2/{{page}}/\n都市::/sort/3/{{page}}/\n历史::/sort/4/{{page}}/\n网游::/sort/5/{{page}}/\n科幻::/sort/6/{{page}}/\n恐怖::/sort/7/{{page}}/\n女生::/sort/8/{{page}}/\n其他::/sort/9/{{page}}/",
     "ruleSearch": {
@@ -788,62 +788,62 @@
     "bookSourceName": "读小说 dxs.tw",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。和微风小说 wfxs.tw 是同一个书库，但搜索能用。手机版目录每页只有 30 章，目录改从电脑版 www.dxs.tw/du/书号/ 一次取全。正文在 twp.zhys.tw 上，有 Cloudflare 验证：第一次（以及验证过期后）会弹出浏览器，点一下验证、看到正文后返回即可；正文用内置浏览器加载，所以会比别的源慢一点。网站分类的翻页是坏的（第几页都显示第 1 页），所以发现里每类只有 20 本。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。和微风小说 wfxs.tw 是同一个书库，但搜索能用。手机版目录每页只有 30 章，目录改从电脑版 www.dxs.tw/du/书号/ 一次取全。正文在 twp.zhys.tw 上，有 Cloudflare 验证：第一次（以及验证过期后）会弹出浏览器，点一下验证、看到正文后返回即可；正文用内置浏览器加载，所以会比别的源慢一点。网站分类的翻页是坏的（第几页都显示第 1 页），所以发现里每类只有 20 本。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
     "concurrentRate": "2/1000",
     "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
-    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"Just a moment\") > -1) {\n  r = java.startBrowserAwait(String(r.url()), \"点一下验证，看到正文后返回\");\n}\nr",
+    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"Just a moment\") > -1 && typeof java.startBrowserAwait == \"function\") {\n  r = java.startBrowserAwait(String(r.url()), \"点一下验证，看到正文后返回\");\n}\nr",
     "searchUrl": "/serch.html?siteid=m.dxs.tw&q={{key}}&page={{page}}",
     "exploreUrl": "玄幻奇幻::/lb-1/?page={{page}}\n武侠仙侠::/lb-2/?page={{page}}\n都市言情::/lb-3/?page={{page}}\n历史军事::/lb-4/?page={{page}}\n科幻灵异::/lb-5/?page={{page}}\n网游竞技::/lb-6/?page={{page}}\n女频频道::/lb-7/?page={{page}}\n其他类别::/lb-8/?page={{page}}",
     "ruleSearch": {
       "bookList": "@css:.result-item",
-      "name": "@css:h3 a@text@js:java.t2s(result)",
-      "author": "@css:.info p:eq(0)@text##\\s*\\|.*$@js:java.t2s(result)",
-      "intro": "@css:.line-clamp-2@text@js:java.t2s(result)",
-      "lastChapter": "@css:.text-teal-700 a@text@js:java.t2s(result)",
+      "name": "@css:h3 a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.info p:eq(0)@text##\\s*\\|.*$@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.line-clamp-2@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.text-teal-700 a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:img@src",
       "bookUrl": "@css:h3 a@href"
     },
     "ruleExplore": {
       "bookList": "@css:.sort-view-book",
-      "name": "@css:h4 a@text@js:java.t2s(result)",
-      "author": "@css:.author@ownText@js:java.t2s(result)",
-      "kind": "@css:.tag .blue@text@js:java.t2s(result)",
-      "intro": "@css:.intro@ownText@js:java.t2s(result)",
+      "name": "@css:h4 a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.author@ownText@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.tag .blue@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.intro@ownText@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:.book-img img@src",
       "bookUrl": "@css:h4 a@href"
     },
     "ruleBookInfo": {
-      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
-      "author": "@css:[property=\"og:novel:author\"]@content@js:java.t2s(result)",
-      "kind": "@css:[property=\"og:novel:category\"]@content@js:java.t2s(result)",
-      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
-      "intro": "@css:[property=\"og:description\"]@content@js:java.t2s(result)",
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:[property=\"og:novel:author\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:[property=\"og:novel:category\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:[property=\"og:description\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:[property=\"og:image\"]@content",
       "tocUrl": "@css:[property=\"og:novel:read_url\"]@content##^https?://[^/]+/du/(\\d+).*$##https://www.dxs.tw/du/$1/",
       "canReName": "1"
     },
     "ruleToc": {
       "chapterList": "@css:.book-chapter-list h3:not(:contains(最新章節)) + ul a",
-      "chapterName": "text@js:java.t2s(result)",
+      "chapterName": "text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "chapterUrl": "href@js:result+',{\"webView\":true}'"
     },
     "ruleContent": {
-      "content": "@css:#article-content@html@js:java.t2s(result)",
+      "content": "@css:#article-content@html@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 15,
-    "lastUpdateTime": 1795508512660
+    "lastUpdateTime": 1795551680253
   },
   {
     "bookSourceUrl": "https://101kks.com",
     "bookSourceName": "101看书 101kks.com",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。和思兔 sto9.com 是同一套网站程序。书页上的作者大多写「佚名」，所以作者只取搜索和发现列表里的。目录从 /book/书号/index.html 一次取全。正文页有 Cloudflare 验证：第一次（以及验证过期后）会弹出浏览器，点一下验证、看到正文后返回即可；正文用内置浏览器加载，所以会比别的源慢一点。正文里「101 看书」加花体字母域名的广告行、开头重复的章节标题都已去掉。",
+    "bookSourceComment": "自己维护。整站繁体，所有文字用 java.t2s 转成简体，漏转的「著」用 replaceRegex 改成「着」。和思兔 sto9.com 是同一套网站程序。书页上的作者大多写「佚名」，所以作者只取搜索和发现列表里的。目录从 /book/书号/index.html 一次取全。正文页有 Cloudflare 验证：第一次（以及验证过期后）会弹出浏览器，点一下验证、看到正文后返回即可；正文用内置浏览器加载，所以会比别的源慢一点。正文里「101 看书」加花体字母域名的广告行、开头重复的章节标题都已去掉。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -853,46 +853,46 @@
     "exploreUrl": "玄幻奇幻::/novels/class/1_{{page}}.html\n武侠仙侠::/novels/class/2_{{page}}.html\n现代都市::/novels/class/3_{{page}}.html\n历史军事::/novels/class/4_{{page}}.html\n科幻小说::/novels/class/5_{{page}}.html\n游戏竞技::/novels/class/6_{{page}}.html\n恐怖灵异::/novels/class/7_{{page}}.html\n言情小说::/novels/class/8_{{page}}.html\n动漫同人::/novels/class/9_{{page}}.html\n其他类型::/novels/class/10_{{page}}.html",
     "ruleSearch": {
       "bookList": "@css:#article_list_content li",
-      "name": "@css:.newnav h3 a@text@js:java.t2s(result)",
-      "author": "@css:.labelbox label:eq(0)@text@js:java.t2s(result)",
-      "kind": "@css:.labelbox label:eq(1)@text@js:java.t2s(result)",
-      "intro": "@css:.ellipsis_2@text@js:java.t2s(result)",
-      "lastChapter": "@css:.zxzj a@text@js:java.t2s(result)",
+      "name": "@css:.newnav h3 a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.labelbox label:eq(0)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.labelbox label:eq(1)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.ellipsis_2@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.zxzj a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:img@data-src",
       "bookUrl": "@css:.newnav h3 a@href"
     },
     "ruleBookInfo": {
-      "name": "@css:[property=\"og:novel:book_name\"]@content@js:java.t2s(result)",
-      "kind": "@css:[property=\"og:novel:category\"]@content@js:java.t2s(result)",
-      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:java.t2s(result)",
-      "intro": "@css:.navtxt@text##\\s*小說關鍵詞[\\s\\S]*$@js:java.t2s(result)",
+      "name": "@css:[property=\"og:novel:book_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:[property=\"og:novel:category\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:[property=\"og:novel:latest_chapter_name\"]@content@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.navtxt@text##\\s*小說關鍵詞[\\s\\S]*$@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:[property=\"og:image\"]@content",
       "tocUrl": "@css:[property=\"og:book_id\"]@content@js:'/book/'+result+'/index.html'",
       "canReName": "1"
     },
     "ruleToc": {
       "chapterList": "@css:#allchapter li a",
-      "chapterName": "text@js:java.t2s(result)",
+      "chapterName": "text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "chapterUrl": "href@js:result+',{\"webView\":true}'"
     },
     "ruleContent": {
-      "content": "@css:.txtnav h1, #txtcontent@textNodes##(?m)\\A[\\s　]*第[^\\n]{0,15}?[章節回][ \\t　]*([^\\n]*)\\n(?:[\\s　]*第[^\\n]{0,15}?[章節回][ \\t　]*\\1[^\\n]{0,40}\\n|[\\s　]*\\1[ \\t　]*\\n)?|[【（(][^【】（）()\\n]{0,60}101\\s*看[書书][^【】（）()\\n]{0,60}[】）)]|^[^\\n【】「」]{0,30}101\\s*看[書书]網[^\\n【】「」]{0,30}$|^[^\\n【】「」]{0,40}[.．][^\\n]{0,4}[cｃ𝐀-𝟿🄰-🆉][^\\n]{0,4}[oｏ𝐀-𝟿🄰-🆉][^\\n]{0,4}[mｍ𝐀-𝟿🄰-🆉][^\\n【】「」]{0,40}$|^[\\s　]*[<>→]+[\\s　]*$@js:java.t2s(result)",
+      "content": "@css:.txtnav h1, #txtcontent@textNodes##(?m)\\A[\\s　]*第[^\\n]{0,15}?[章節回][ \\t　]*([^\\n]*)\\n(?:[\\s　]*第[^\\n]{0,15}?[章節回][ \\t　]*\\1[^\\n]{0,40}\\n|[\\s　]*\\1[ \\t　]*\\n)?|[【（(][^【】（）()\\n]{0,60}101\\s*看[書书][^【】（）()\\n]{0,60}[】）)]|^[^\\n【】「」]{0,30}101\\s*看[書书]網[^\\n【】「」]{0,30}$|^[^\\n【】「」]{0,40}[.．][^\\n]{0,4}[cｃ𝐀-𝟿🄰-🆉][^\\n]{0,4}[oｏ𝐀-𝟿🄰-🆉][^\\n]{0,4}[mｍ𝐀-𝟿🄰-🆉][^\\n【】「」]{0,40}$|^[\\s　]*[<>→]+[\\s　]*$@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 16,
-    "lastUpdateTime": 1795508585135,
+    "lastUpdateTime": 1795551680253,
     "ruleExplore": {
       "bookList": "@css:#article_list_content li",
-      "name": "@css:.newnav h3 a@text@js:java.t2s(result)",
-      "author": "@css:.labelbox label:eq(0)@text@js:java.t2s(result)",
-      "kind": "@css:.labelbox label:eq(1)@text@js:java.t2s(result)",
-      "intro": "@css:.ellipsis_2@text@js:java.t2s(result)",
-      "lastChapter": "@css:.zxzj a@text@js:java.t2s(result)",
+      "name": "@css:.newnav h3 a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "author": "@css:.labelbox label:eq(0)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "kind": "@css:.labelbox label:eq(1)@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "intro": "@css:.ellipsis_2@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
+      "lastChapter": "@css:.zxzj a@text@js:(typeof java.t2s==\"function\"?java.t2s(result):result)",
       "coverUrl": "@css:img@data-src",
       "bookUrl": "@css:.newnav h3 a@href"
     },
     "bookUrlPattern": "https?://101kks\\.com/book/\\d+\\.html",
-    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"Just a moment\") > -1) {\n  r = java.startBrowserAwait(String(r.url()), \"点一下验证，看到正文后返回\");\n}\nr"
+    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"Just a moment\") > -1 && typeof java.startBrowserAwait == \"function\") {\n  r = java.startBrowserAwait(String(r.url()), \"点一下验证，看到正文后返回\");\n}\nr"
   }
 ]

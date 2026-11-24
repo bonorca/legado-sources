@@ -4,7 +4,7 @@
     "bookSourceName": "格格党 ggd66.com",
     "bookSourceGroup": "自用",
     "bookSourceType": 0,
-    "bookSourceComment": "自己维护。和笔趣阁 biquge78.cc 是同一套网站程序，规则照搬。新近章节夹着繁体（像是从繁体站转来的），所以正文统一用 java.t2s 转简体，「丶」换回顿号，漏转的「著」改成「着」。一章常分成两页，靠 nextContentUrl 自动接上。正文里的「↑返回顶部↑」和「新⑥⑨书吧」类广告已去掉。搜索一次返回全部结果，没有翻页。",
+    "bookSourceComment": "自己维护。和笔趣阁 biquge78.cc 是同一套网站程序，规则照搬。新近章节夹着繁体（像是从繁体站转来的），所以正文统一用 java.t2s 转简体，「丶」换回顿号，漏转的「著」改成「着」。一章常分成两页，靠 nextContentUrl 自动接上。正文里的「↑返回顶部↑」和「新⑥⑨书吧」类广告已去掉。搜索一次返回全部结果，没有翻页。阅读 APP 以外、没有 java.t2s 的 APP（比如 iOS 上的）会跳过这一步、保留繁体，这时打开 APP 自带的繁简转换即可。",
     "enabled": true,
     "enabledExplore": true,
     "enabledCookieJar": true,
@@ -45,12 +45,12 @@
       "chapterUrl": "href"
     },
     "ruleContent": {
-      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:java.t2s(result).replace(/丶/g,\"、\")",
+      "content": "@css:#rtext@html##新?[?？⑥⑨69六九]{1,6}书吧→?|↑返回顶部↑@js:(typeof java.t2s==\"function\"?java.t2s(result):result).replace(/丶/g,\"、\")",
       "nextContentUrl": "@css:a#linkNext:contains(下一页)@href",
       "replaceRegex": "##(?<![显土卓巨名原编论译遗专新拙合昭较])著(?![作名称述者录])##着"
     },
     "weight": 0,
     "customOrder": 6,
-    "lastUpdateTime": 1795251575255
+    "lastUpdateTime": 1795551680253
   }
 ]

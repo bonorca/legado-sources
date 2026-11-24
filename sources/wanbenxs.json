@@ -10,7 +10,7 @@
     "enabledCookieJar": true,
     "concurrentRate": "2/1000",
     "header": "{\"User-Agent\": \"Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36\"}",
-    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"<title></title><div></div>\") > -1) {\n  r = java.connect(String(r.url()));\n}\nr",
+    "loginCheckJs": "var r = result;\nif (String(r.body()).indexOf(\"<title></title><div></div>\") > -1 && typeof java.connect == \"function\") {\n  r = java.connect(String(r.url()));\n}\nr",
     "searchUrl": "/search/?searchkey={{key}}",
     "exploreUrl": "玄幻::/sort/1/{{page}}/\n武侠::/sort/2/{{page}}/\n都市::/sort/3/{{page}}/\n历史::/sort/4/{{page}}/\n网游::/sort/5/{{page}}/\n科幻::/sort/6/{{page}}/\n恐怖::/sort/7/{{page}}/\n女生::/sort/8/{{page}}/\n其他::/sort/9/{{page}}/",
     "ruleSearch": {
