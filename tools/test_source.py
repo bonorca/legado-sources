@@ -10,6 +10,7 @@
   {{表达式}}           地址里的 JS，交给 node 计算
   nextContentUrl / replaceRegex   正文分页和正文替换
   nextTocUrl         目录分页：取到一个地址就一页页往下翻，取到多个就全部打开
+  被挡的页面          403/429/503、Cloudflare 验证页等，先请 r.jina.ai 代取一次（只限 GET），取到就照常解析
   loginCheckJs       只认两种写法：响应里有某段字（拦截页）就用 java.connect 带着 Cookie 再请求一次，
                      或者用 java.startBrowserAwait 弹出浏览器让人验证（检测时记为受限）
 选择器里的 :eq(n) 按 Jsoup 的意思处理（从 0 开始），:contains() 也能用。
@@ -208,6 +209,22 @@ class Runner:
         self.base = src["bookSourceUrl"]
         self.s = requests.Session()
         self.s.headers.update(json.loads(src.get("header") or "{}"))
+        self.jina_urls = []
+
+    def via_jina(self, url):
+        """直接访问被挡时，请 r.jina.ai 用它的浏览器打开页面，取回渲染后的 HTML；它也被挡就返回 None。"""
+        try:
+            time.sleep(3)  # 不带 key 的 jina 每分钟只能调用十几次
+            r = requests.get("https://r.jina.ai/" + url, headers={"X-Return-Format": "html", "X-No-Cache": "true"},
+                             timeout=90)
+        except requests.RequestException:
+            return None
+        if r.status_code != 200:
+            return None
+        r.encoding = "utf-8"
+        if BLOCK_TEXT.search(r.text[:50000]) and len(r.content) < 50000:
+            return None
+        return r.text
 
     def fetch(self, url):
         url, opt = split_url(url)
@@ -241,16 +258,26 @@ class Runner:
             m = re.search(r'indexOf\("([^"]+)"\)\s*>\s*-1', chk)
             if not (m and ("java.connect(" in chk or "java.startBrowserAwait(" in chk)):
                 raise NotImplementedError("测试脚本不支持这段 loginCheckJs: " + chk)
+        why = None
+        if chk:
+            m = re.search(r'indexOf\("([^"]+)"\)\s*>\s*-1', chk)
+            if not (m and ("java.connect(" in chk or "java.startBrowserAwait(" in chk)):
+                raise NotImplementedError("测试脚本不支持这段 loginCheckJs: " + chk)
             if m.group(1) in r.text and "java.startBrowserAwait(" in chk:
-                # APP 里会弹出浏览器让人点验证；检测时没人点，记为受限
-                raise Blocked(f"要在浏览器里人工验证（「{m.group(1)}」）")
-            if m.group(1) in r.text:
+                # APP 里会弹出浏览器让人点验证；检测时没人点
+                why = f"要在浏览器里人工验证（「{m.group(1)}」）"
+            elif m.group(1) in r.text:
                 print("     （碰到拦截页，和 loginCheckJs 一样带着 Cookie 再请求一次）")
                 time.sleep(0.6)
                 r = self.s.request(method, url, data=body, headers=headers, timeout=45)
-        why = blocked_reason(r)
+        why = why or blocked_reason(r)
         if why:
-            raise Blocked(why)
+            jr = self.via_jina(url) if method == "GET" else None
+            if jr is None:
+                raise Blocked(why)
+            print(f"     （{why}，改由 r.jina.ai 代取，接着用同样的规则解析）")
+            self.jina_urls.append(url)
+            return url, BeautifulSoup(jr, "lxml")
         r.raise_for_status()
         cs = opt.get("charset")
         if not cs:  # 和 APP 一样：没写 charset 就看响应头和网页里的 <meta charset>
@@ -304,6 +331,7 @@ class Report:
         self.blocked = {s: [] for s in STAGES}
         self.skipped = set()
         self.book_url = ""
+        self.jina = 0  # 有几个页面是被挡后由 r.jina.ai 代取的
 
     def record(self, stage, e):
         """某一步抛了异常：被网站挡了记「受限」，其余记「失败」。"""
@@ -483,6 +511,7 @@ def test_source(src, key, book=None):
             rep.skipped.add(stage)
     except Exception as e:
         rep.record(stage, e)
+    rep.jina = len(r.jina_urls)
     return rep
 
 def cell(failed, blocked, skipped, s):
@@ -502,6 +531,9 @@ def write_summary(path, reports):
     notes += [f"- ⚠️ {rp.name} / {s}：{m}" for rp in reports for s in STAGES for m in rp.blocked[s]]
     if notes:
         lines += ["", "**问题**", ""] + notes
+    via = [f"- {rp.name}：{rp.jina} 个页面" for rp in reports if rp.jina]
+    if via:
+        lines += ["", "**直接访问被挡、改由 r.jina.ai 代取的**", ""] + via
     Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -534,7 +566,8 @@ def main():
         bad = [m for s in STAGES for m in rp.failed[s]]
         lim = [m for s in STAGES for m in rp.blocked[s]]
         mark = "❌ " if bad else ("⚠️ " if lim else "✅ ")
-        print(mark + rp.name + (f"（{len(bad)} 项没通过）" if bad else ("（受限）" if lim else "")))
+        print(mark + rp.name + (f"（{len(bad)} 项没通过）" if bad else ("（受限）" if lim else ""))
+              + (f"（{rp.jina} 个页面经 jina 代取）" if rp.jina else ""))
         for m in bad + lim:
             print("   - " + m)
     if a.summary:
@@ -546,7 +579,7 @@ def main():
               "blocked": {s: m for s, m in rp.blocked.items() if m},
               "skipped": sorted(rp.skipped - {s for s, m in rp.failed.items() if m}
                                 - {s for s, m in rp.blocked.items() if m}, key=STAGES.index),
-              "book_url": rp.book_url}
+              "book_url": rp.book_url, "jina": rp.jina}
              for rp in reports],
             ensure_ascii=False, indent=1), encoding="utf-8")
     sys.exit(0 if all(rp.ok for rp in reports) else 1)

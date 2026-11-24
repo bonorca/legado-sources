@@ -77,12 +77,15 @@ def main():
         elif r.get("blocked"):
             state = f"受限（连续 {st['blocked_streak']} 天）" if st.get("blocked_streak", 0) > 1 else "受限"
         else:
-            state = "正常"
+            state = "正常（经 jina）" if r.get("jina") else "正常"
         L.append(f"| {r['name']} | " + " | ".join(cell(r, s) for s in STAGES) + f" | {state} |")
     notes = [f"- ❌ {r['name']} / {s}：{m}" for r in results for s in STAGES for m in r["failed"].get(s, [])]
     notes += [f"- ⚠️ {r['name']} / {s}：{m}" for r in results for s in STAGES for m in r.get("blocked", {}).get(s, [])]
     if notes:
         L += ["", "**问题**", ""] + notes
+    via = [f"- {r['name']}：{r['jina']} 个页面" for r in results if r.get("jina")]
+    if via:
+        L += ["", "**直接访问被挡、改由 r.jina.ai 代取后规则正常的**", ""] + via
     if maint:
         L += ["", "**自动维护**", ""] + [f"- {x}" for x in maint]
     # 近 30 天：每天取最后一次检测
