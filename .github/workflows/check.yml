@@ -2,7 +2,7 @@ name: 书源检测
 
 on:
   schedule:
-    - cron: "0 22 * * *" # 每天北京时间 6:00
+    - cron: "0 13 * * *" # 每天 UTC-7 早上 6:00（UTC 13:00）
   workflow_dispatch:
   push:
     branches: [main]
@@ -63,7 +63,7 @@ jobs:
         if: github.event_name == 'schedule'
         run: |
           touch maint.md
-          python tools/maintain.py results.json --today "$(TZ=Asia/Shanghai date +%F)" \
+          python tools/maintain.py results.json --today "$(TZ=Etc/GMT+7 date +%F)" \
             --report maint.md --commit-msg msg.txt 2>&1 | tee maint_log.txt
           if [ -s maint.md ]; then
             { echo "## 自动维护"; echo; cat maint.md; } >> "$GITHUB_STEP_SUMMARY"

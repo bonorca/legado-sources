@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 STAGES = ["搜索", "详情", "目录", "正文", "发现"]
-BJ = timezone(timedelta(hours=8))
+TZ = timezone(timedelta(hours=-7))  # 显示用 UTC-7
 TRIGGER = {"schedule": "每日定时检测", "push": "推送后检测", "workflow_dispatch": "手动检测", "manual": "本地检测"}
 BEGIN = "<!-- 书源状态 开始（下面的内容由检测自动生成，改了会被覆盖） -->"
 END = "<!-- 书源状态 结束 -->"
@@ -38,7 +38,7 @@ def main():
     a = ap.parse_args()
 
     root = Path(a.root)
-    now = datetime.now(BJ)
+    now = datetime.now(TZ)
     results = json.loads(Path(a.results).read_text(encoding="utf-8"))
     maint = []
     if a.maint and Path(a.maint).exists():
@@ -65,7 +65,7 @@ def main():
     run = f" · [运行记录]({a.run_url})" if a.run_url else ""
     count = f"**{passed}/{len(results)} 正常**" + (f"，{len(limited)} 个受限" if limited else "") \
             + (f"，{len(failed)} 个有问题" if failed else "")
-    L.append(f"最近一次检测：{now:%Y-%m-%d %H:%M}（北京时间）· {TRIGGER.get(a.trigger, a.trigger)} · {count}{run}")
+    L.append(f"最近一次检测：{now:%Y-%m-%d %H:%M}（UTC-7）· {TRIGGER.get(a.trigger, a.trigger)} · {count}{run}")
     L += ["", "| 书源 | " + " | ".join(STAGES) + " | 状态 |", "|---" * (len(STAGES) + 2) + "|"]
     for r in results:
         st = status.get(r["url"], {})
