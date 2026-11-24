@@ -472,7 +472,8 @@ def test_source(src, key, book=None):
                 if ok and bs2 and [b["bookUrl"] for b in bs2] == [b["bookUrl"] for b in bs]:
                     rep.check(stage, True, f"{title}：第1页 {len(bs)} 本，只有 1 页（站点把第2页显示成第1页）")
                     continue
-                rep.check(stage, ok and bs2 and bs2[0]["bookUrl"] != bs[0]["bookUrl"],
+                # 第 2 页有第 1 页没有的书就算能翻。网站按更新时间排序时，两页可能隔着缓存错开几本，首本相同不算错
+                rep.check(stage, ok and bs2 and bool({b["bookUrl"] for b in bs2} - {b["bookUrl"] for b in bs}),
                           f"{title}：第1页 {len(bs)} 本，第2页 {len(bs2)} 本，例：{bs[0]['name'] if bs else '-'} / {bs[0]['author'] if bs else '-'} / {bs[0]['kind'] if bs else '-'}")
         else:
             rep.skipped.add(stage)
