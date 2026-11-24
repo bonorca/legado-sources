@@ -110,8 +110,18 @@ def apply_post(value, regex, js):
         elif wrap:
             value = (wrap.group(1) or "") + value + (wrap.group(2) or "")
         else:
-            raise NotImplementedError("测试脚本不支持这段 JS: " + js)
+            value = run_node(js, value)
     return value.strip()
+
+
+def run_node(js, result):
+    """其余的 JS 交给 node 跑。java 只模拟安卓阅读里有的 java.t2s（用 OpenCC 转好的结果代替），够判断「有没有 java.t2s」那种写法。"""
+    code = ("const result=" + json.dumps(result, ensure_ascii=False) + ";"
+            "const __t2s=" + json.dumps(T2S.convert(result), ensure_ascii=False) + ";"
+            "const java={t2s:function(s){return s===result?__t2s:s;}};"
+            "const __v=eval(" + json.dumps(js, ensure_ascii=False) + ");"
+            "process.stdout.write(Array.isArray(__v)?__v.join(String.fromCharCode(10)):String(__v));")
+    return subprocess.run(["node", "-e", code], capture_output=True, text=True, encoding="utf-8", check=True).stdout
 
 
 def select_default(el, rule):
