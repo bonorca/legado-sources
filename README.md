@@ -16,7 +16,7 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 
 ## 书源状态
 
-最近一次检测：2026-11-24 14:40（北京时间）· 推送后检测 · **15/15 正常** · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45341429488)
+最近一次检测：2026-11-23 23:55（UTC-7）· 推送后检测 · **15/15 正常** · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45342692899)
 
 | 书源 | 搜索 | 详情 | 目录 | 正文 | 发现 | 状态 |
 |---|---|---|---|---|---|---|
@@ -41,7 +41,7 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 | 日期 | 正常 | 受限 | 有问题 |
 |---|---|---|---|
 | 2026-11-24 | 15/15 | — | — |
-| 2026-11-23 | 12/13 | — | 微风小说 wfxs.tw |
+| 2026-11-23 | 15/15 | — | — |
 
 </details>
 
