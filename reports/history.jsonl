@@ -5,3 +5,4 @@
 {"time": "2026-11-23T19:45+08:00", "trigger": "push", "total": 12, "passed": 11, "failed": ["微风小说 wfxs.tw"], "actions": []}
 {"time": "2026-11-23T20:11+08:00", "trigger": "push", "total": 13, "passed": 12, "failed": ["微风小说 wfxs.tw"], "actions": []}
 {"time": "2026-11-24T00:05+08:00", "trigger": "push", "total": 15, "passed": 14, "failed": ["微风小说 wfxs.tw"], "limited": [], "actions": []}
+{"time": "2026-11-24T13:57+08:00", "trigger": "schedule", "total": 15, "passed": 14, "failed": ["思兔 sto9.com"], "limited": [], "actions": ["⚠️ **思兔 sto9.com**：发现：言情小说：第1页 15 本，第2页 15 本，例：兽世：今晚吃谁？ / 邂蕾 / 言情小说（第 1 次失败，连续 2 次才停用）"]}
