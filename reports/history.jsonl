@@ -16,3 +16,4 @@
 {"time": "2026-11-24T14:48-07:00", "trigger": "push", "total": 17, "passed": 17, "failed": [], "limited": [], "actions": []}
 {"time": "2026-11-24T16:02-07:00", "trigger": "schedule", "total": 17, "passed": 17, "failed": [], "limited": [], "actions": []}
 {"time": "2026-11-25T15:17-07:00", "trigger": "schedule", "total": 17, "passed": 17, "failed": [], "limited": [], "actions": []}
+{"time": "2026-11-26T15:15-07:00", "trigger": "schedule", "total": 17, "passed": 16, "failed": ["思兔 sto9.com"], "limited": [], "actions": ["⚠️ **思兔 sto9.com**：正文：第589章 梦且微：还要墓吗？：正文里没有广告字样（发现 ['最新章节']）（第 1 次失败，连续 2 次才停用）"]}
