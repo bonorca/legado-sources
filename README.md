@@ -14,9 +14,9 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 
 <!-- 书源状态 开始（下面的内容由检测自动生成，改了会被覆盖） -->
 
-<details><summary><b>书源状态</b>：<b>16/17 正常</b>，1 个有问题（2026-11-26 15:15 UTC-7）</summary>
+<details><summary><b>书源状态</b>：<b>17/17 正常</b>（2026-11-27 14:57 UTC-7）</summary>
 
-最近一次检测：2026-11-26 15:15（UTC-7）· 每日定时检测 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/45902816473)
+最近一次检测：2026-11-27 14:57（UTC-7）· 每日定时检测 · [运行记录](https://github.com/bonorca/legado-sources/actions/runs/46072761552)
 
 | 书源 | 搜索 | 详情 | 目录 | 正文 | 发现 | 状态 |
 |---|---|---|---|---|---|---|
@@ -25,7 +25,7 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 | 52书库 52shuku.net | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 笔趣阁 biquge78.cc | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 武侠小说网 wuxiayue.com | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
-| 思兔 sto9.com | ✅ | ✅ | ✅ | ❌ | ✅ | 有问题（第 1 天） |
+| 思兔 sto9.com | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 格格党 ggd66.com | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 精品小说 jpxs123.top | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 天涯书库 tianyashuku.net | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
@@ -38,22 +38,15 @@ https://cdn.jsdelivr.net/gh/bonorca/legado-sources@main/all.json
 | 读小说 dxs.tw | ✅ | ✅ | ✅ | ✅ | ✅ | 正常 |
 | 101看书 101kks.com | ✅ | ✅ | ✅ | ✅ | ✅ | 正常（经 jina） |
 
-**问题**
-
-- ❌ 思兔 sto9.com / 正文：第589章 梦且微：还要墓吗？：正文里没有广告字样（发现 ['最新章节']）
-
 **直接访问被挡、改由 r.jina.ai 代取后规则正常的**
 
 - 101看书 101kks.com：3 个页面
-
-**自动维护**
-
-- ⚠️ **思兔 sto9.com**：正文：第589章 梦且微：还要墓吗？：正文里没有广告字样（发现 ['最新章节']）（第 1 次失败，连续 2 次才停用）
 
 <details><summary>最近 30 天</summary>
 
 | 日期 | 正常 | 受限 | 有问题 |
 |---|---|---|---|
+| 2026-11-27 | 17/17 | — | — |
 | 2026-11-26 | 16/17 | — | 思兔 sto9.com |
 | 2026-11-25 | 17/17 | — | — |
 | 2026-11-24 | 17/17 | — | — |
